@@ -1,0 +1,3 @@
+﻿  Replace.cpp
+D:\VSProject\cs2\cs2_united\cs2_patch\Replace.cpp(56,23): warning C4018: “<”: 有符号/无符号不匹配
+  cs2_patch.vcxproj -> D:\VSProject\cs2\cs2_united\Debug\cs2_patch.dll
