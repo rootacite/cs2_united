@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:cs2_chs"
         mc:Ignorable="d"
         Title="MainWindow" Height="150" Width="450" ResizeMode="NoResize">
-    <Grid>
+    <Grid Loaded="Grid_Loaded">
         
     </Grid>
 </Window>

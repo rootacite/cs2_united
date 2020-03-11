@@ -1,15 +1,15 @@
 #include "pch.h"
 #include "Data.h"
 
-MicroData Index(L"Index.ax", sizeof(IndexData));
-MicroBinary Data(L"Data.ax");
 
+extern MicroData* Index;
+extern MicroBinary* Data;
 
 extern HMODULE hMod;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
 extern "C" extern DLLAPI int nID;
 
-DLLAPI void CreateDataExport(WCHAR data[])
+void CreateDataExport(WCHAR data[])
 {
     WCHAR sjp[3096];
     WCHAR scn[3096];
@@ -83,9 +83,9 @@ BOOL CreateDataByIDEx(LPCWSTR name, LPCWSTR name2, int ID, LPCWSTR jpBuff, int l
     createData.JpLength = ljp;
     createData.CnLength = lcn;
 
-    createData.JpBass = Data.Size();
+    createData.JpBass = Data->Size();
     _Data.Push(jpBuff, ljp);
-    createData.CnBass = Data.Size();
+    createData.CnBass = Data->Size();
     _Data.Push(cnBuffer, lcn);
 
     _Index.Push(&createData);
@@ -101,14 +101,14 @@ BOOL CreateDataByID(int ID, LPCWSTR jpBuff, int ljp, LPCWSTR cnBuffer, int lcn)
     createData.JpLength = ljp;
     createData.CnLength = lcn;
 
-    createData.JpBass = Data.Size();
-    Data.Push(jpBuff, ljp);
-    createData.CnBass = Data.Size();
-    Data.Push(cnBuffer, lcn);
+    createData.JpBass = Data->Size();
+    Data->Push(jpBuff, ljp);
+    createData.CnBass = Data->Size();
+    Data->Push(cnBuffer, lcn);
 
-    Index.Push(&createData);
-    Index.Save();
-    Data.Save();
+    Index->Push(&createData);
+    Index->Save();
+    Data->Save();
     return 0;
 }
 
@@ -118,28 +118,28 @@ BOOL GetDataByJP(int* ID, LPCWSTR jpBuff, LPWSTR cnBuffer)
 
     WCHAR njp[3096];
     WCHAR ncn[3096];
-    Index = 0;
+    (*Index) = 0;
     do {
-        Index.Get(&index);
+        Index->Get(&index);
 
-        Data = index.JpBass;
-        Data.Sub(njp, index.JpLength);
-        Data = index.CnBass;
-        Data.Sub(ncn, index.CnLength);
+       ( *Data) = index.JpBass;
+        Data->Sub(njp, index.JpLength);
+       (* Data) = index.CnBass;
+        Data->Sub(ncn, index.CnLength);
 
         if (lstrcmpW(jpBuff, njp) == 0) {
             *ID = index.Id;
             lstrcpyW(cnBuffer, ncn);
-            Index = 0;
-            Data = 0;
+            (*Index) = 0;
+            (*Data) = 0;
             return 1;
         }
 
-        if (Index++)
+        if ((*Index)++)
             continue;
         else {
-            Data = 0;
-            Index = 0;
+            (*Data) = 0;
+            (*Index) = 0;
             return 0;
         }
     } while (1);
@@ -147,31 +147,37 @@ BOOL GetDataByJP(int* ID, LPCWSTR jpBuff, LPWSTR cnBuffer)
 
 BOOL GetDataByID(int ID, LPWSTR jpBuff, LPWSTR cnBuffer)
 {
+   // 
+    if (ID < 0)return 0;
+
     IndexData index;
-    Index = ID;
-    Index.Get(&index);
+    (*Index) = ID;
+    Index->Get(&index);
+
     if (index.Id != ID)
     {
-        Index = 0;
+        (*Index) = 0;
         do {
-            Index.Get(&index);
+            Index->Get(&index);
             if (index.Id == ID)
                 break;
-            if (Index++)
+            if ((*Index)++)
                 continue;
             else {
-                Index = 0;
+                (*Index) = 0;
                 return 0;
             }
         } while (1);
     }
 
-    Data = index.JpBass;
-    Data.Sub(jpBuff, index.JpLength);
-    Data = index.CnBass;
-    Data.Sub(cnBuffer, index.CnLength);
-    Data = 0;
-    Index = 0;
+    (*Data) = index.JpBass;
+    Data->Sub(jpBuff, index.JpLength);
+
+    (*Data) = index.CnBass;
+    Data->Sub(cnBuffer, index.CnLength);
+
+    (*Data) = 0;
+    (*Index) = 0;
     return 1;
 }
 
@@ -180,11 +186,11 @@ int GEtLargestID()
     IndexData index;
     int result = 0;
     do {
-        Index.Get(&index);
+        Index->Get(&index);
         if (index.Id > result)
             result = index.Id;
-    } while (Index++);
+    } while ((*Index)++);
 
-    Index = 0;
+    (*Index) = 0;
     return result;
 }

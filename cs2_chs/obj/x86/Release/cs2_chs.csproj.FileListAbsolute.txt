@@ -1,0 +1,17 @@
+D:\VSProject\cs2\cs2_united\cs2_chs\bin\x86\Release\cs2_chs.exe.config
+D:\VSProject\cs2\cs2_united\cs2_chs\bin\x86\Release\cs2_chs.exe
+D:\VSProject\cs2\cs2_united\cs2_chs\bin\x86\Release\cs2_chs.pdb
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\MainWindow.g.cs
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\App.g.cs
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs_MarkupCompile.cache
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs_MarkupCompile.lref
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\MainWindow.baml
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.g.resources
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.Properties.Resources.resources
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.csproj.GenerateResource.cache
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.exe
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.pdb
+D:\VSProject\cs2\cs2_united\Release\cs2_chs.exe.config
+D:\VSProject\cs2\cs2_united\Release\cs2_chs.exe
+D:\VSProject\cs2\cs2_united\Release\cs2_chs.pdb
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.csprojAssemblyReference.cache

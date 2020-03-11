@@ -2,13 +2,13 @@
 #include "BuildIn.h"
 #include "Data.h"
 
-extern MicroData Index;
-extern MicroBinary Data;
-
 extern HMODULE hMod;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
 extern "C" extern DLLAPI int nID;
 
+
+MicroData* Index = NULL;
+ MicroBinary* Data = NULL;
 
 signed int (*sub_5FC1C0)() = (signed int(*)(void))0x5FC1C0;//real function point
 HMODULE SelfHandle = NULL;
@@ -35,25 +35,28 @@ BOOL InjectDLL(HANDLE hProcess, LPCWSTR dllFilePathName)
     return TRUE;
 }
 
-DLLAPI HANDLE InjectSelfTo(wchar_t inptr[])
+HANDLE InjectSelfTo(LPCSTR inptr)
 {
+ //   MessageBoxA(0, inptr,"",0);
 
     HANDLE currentThread = NULL;
 
     LPPROCESS_INFORMATION info = new PROCESS_INFORMATION;
-    STARTUPINFO si = { sizeof(si) };
+    STARTUPINFOA si = { sizeof(si) };
     do {
-        wchar_t m_CommandLine[] = L"";
-        BOOL hF = CreateProcess(inptr, NULL,
+        BOOL hF = CreateProcessA(inptr, NULL,
             NULL, NULL, FALSE,
             CREATE_SUSPENDED, NULL, NULL, &si, info);
         if (!hF) {
-            MessageBox(0, L"创建进程失败", L"错误", MB_ICONERROR);
+            MessageBoxA(0, "创建进程失败", inptr, MB_ICONERROR);
             return 0;
         }
         //   MessageBox(0, L"1", L"", 0);
         wchar_t m_Path[MAX_PATH];
         GetModuleFileName(hMod, m_Path, MAX_PATH);
+
+
+
         if (!InjectDLL(info->hProcess, m_Path)) {
             MessageBoxA(0, "", "", 0);
             return 0;
@@ -76,8 +79,6 @@ DLLAPI HANDLE InjectSelfTo(wchar_t inptr[])
 
     lstrcpyW(ms_str, L" ");
 
-    Index.Load();
-    Data.Load();
     return  currentThread;
 }
 
@@ -106,8 +107,16 @@ signed int Fakesub_5FC1C0()
 
     return sub_5FC1C0();
 }
-
-DLLAPI void start()
+DWORD WINAPI Th(LPVOID lp) {
+    char a[16];
+    while (1) {
+        _itoa_s(nID, a, 10);
+        SetWindowTextA(GetForegroundWindow(), a);
+        Sleep(100);
+    }
+    return 0;
+}
+void start()
 {
 
     DetourRestoreAfterWith();
@@ -116,7 +125,14 @@ DLLAPI void start()
     DetourAttach(&(PVOID&)sub_5FC1C0, Fakesub_5FC1C0);
     DetourTransactionCommit();
 
+    Index = new MicroData(L"Index.ax", sizeof(IndexData));
+    Data = new MicroBinary(L"Data.ax");
+
+    Index->Load();
+    Data->Load();
     start_falg = TRUE;
+
+   // CreateThread(0,0,Th,0,0,0);
 }
 
 void end()

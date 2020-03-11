@@ -77,8 +77,9 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     VirtualProtect(nCView, 10 + (localString.length() * 2), pOld, NULL);
 }
 
-DLLAPI int TranSplete(DWORD lp)
+ int TranSplete(DWORD lp)
 {
+    // MessageBox(0,L"Transplete start",L"",0);
     if (!lp)return -1;
     DWORD ppDf = *(DWORD*)(lp + 0x2B0);
     if (!ppDf)return -1;
@@ -120,7 +121,6 @@ DLLAPI int TranSplete(DWORD lp)
             if (!GetDataByJP(&ppId, nStr.c_str(), cscn))
                 return -1;
     }
-
     // MessageBoxW(0, L"1", L"", 0);
     if (lstrcmpW(nStr.c_str(), cscn) == 0) {
 
@@ -139,12 +139,8 @@ DLLAPI int TranSplete(DWORD lp)
     if (wcsstr(nStr.c_str(), L"ふふふっ"))
         return -1;
 
-    //   MessageBoxW(0, L"3", L"", 0);
 
     lstrcpyW(ms_str, nStr.c_str());
-
-    //   MessageBoxW(0, L"4", L"", 0);
-
     if (!GetDataByID(nID, sjp, scn)) {
         int pID = 0;
         if (GetDataByJP(&pID, nStr.c_str(), scn)) {

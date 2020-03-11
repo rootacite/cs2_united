@@ -13,8 +13,14 @@ extern "C" DLLAPI int nID = 0;
 #pragma comment(linker, "/section:PublicData,rws")
 
 
+char IpfData[16];
+#define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
+
+
 extern HMODULE SelfHandle ;
 extern bool start_falg ;
+
+
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -25,6 +31,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
         SelfHandle = hModule;
+        hMod = hModule;
         break;
     case DLL_THREAD_ATTACH:
         break;

@@ -26,9 +26,3 @@ struct IndexData {
 
 
 
-char IpfData[16];
-#define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
-
-
-
-
