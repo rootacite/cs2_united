@@ -43,16 +43,16 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     wstring localString = ws;
     if (!pDf)return;
     if (!ws)return;
-    DWORD Df = *(DWORD*)pDf;//Df Êý¾ÝµÄÖ¸Õë
-    if (!Df)return;//ÎªÁãÔòÖÕÖ¹º¯Êý
-    TESTDATA* nCView = (TESTDATA*)Df;//Ê¹Ò»¸öTESTDATA*Ö¸ÏòDf
+    DWORD Df = *(DWORD*)pDf;//Df ï¿½ï¿½ï¿½Ýµï¿½Ö¸ï¿½ï¿½
+    if (!Df)return;//Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
+    TESTDATA* nCView = (TESTDATA*)Df;//Ê¹Ò»ï¿½ï¿½TESTDATA*Ö¸ï¿½ï¿½Df
     DWORD pOld;
     VirtualProtect(nCView, 10 + (localString.length() * 2), PAGE_READWRITE, &pOld);
-    TESTDATA loadFirst = *nCView;//±£´æµÚÒ»¸öÊý¾Ý
-    int posInLine = 0;//ºáÅÅÎ»ÖÃ
-    int posinCross = 0xD;//ÊúÅÅÎ»ÖÃ
+    TESTDATA loadFirst = *nCView;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    int posInLine = 0;//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+    int posinCross = 0xD;//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 
-  //  SetWindowTextW(m_hWnd, L"½øÈëÑ­»·");
+  //  SetWindowTextW(m_hWnd, L"ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½");
     for (int i = 0; i < localString.length(); i++)
     {
         if (localString[i] == L'\n')
@@ -71,7 +71,7 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
             posInLine += 0X1A;
         }
     }
-    //  SetWindowTextW(m_hWnd, L"Ìø³öÑ­»·");
+    //  SetWindowTextW(m_hWnd, L"ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½");
     *(DWORD*)(pDf + 4) = (DWORD)nCView;
 
     VirtualProtect(nCView, 10 + (localString.length() * 2), pOld, NULL);
@@ -129,14 +129,14 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     }
 
     //  MessageBoxW(0, L"2", L"", 0);
-    if (wcsstr(nStr.c_str(), L"¡­¡­¡­")) {
+    if (wcsstr(nStr.c_str(), L"â€¦â€¦â€¦")) {
 
         return -1;
     }
-    if (wcsstr(nStr.c_str(), L"¡­¤¢¤¢"))
+    if (wcsstr(nStr.c_str(), L"â€¦ã‚ã‚"))
         return -1;
 
-    if (wcsstr(nStr.c_str(), L"¤Õ¤Õ¤Õ¤Ã"))
+    if (wcsstr(nStr.c_str(), L"ãµãµãµã£"))
         return -1;
 
 

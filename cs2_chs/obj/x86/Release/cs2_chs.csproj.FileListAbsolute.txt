@@ -15,3 +15,5 @@ D:\VSProject\cs2\cs2_united\Release\cs2_chs.exe.config
 D:\VSProject\cs2\cs2_united\Release\cs2_chs.exe
 D:\VSProject\cs2\cs2_united\Release\cs2_chs.pdb
 D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.csprojAssemblyReference.cache
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.csproj.CopyComplete
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\App.baml

@@ -6,9 +6,10 @@ extern HMODULE hMod;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
 extern "C" extern DLLAPI int nID;
 
+extern "C" extern DLLAPI DWORD tPid;
 
-MicroData* Index = NULL;
- MicroBinary* Data = NULL;
+extern MicroData* Index;
+extern MicroBinary* Data;
 
 signed int (*sub_5FC1C0)() = (signed int(*)(void))0x5FC1C0;//real function point
 HMODULE SelfHandle = NULL;
@@ -48,7 +49,7 @@ HANDLE InjectSelfTo(LPCSTR inptr)
             NULL, NULL, FALSE,
             CREATE_SUSPENDED, NULL, NULL, &si, info);
         if (!hF) {
-            MessageBoxA(0, "创建进程失败", inptr, MB_ICONERROR);
+            MessageBoxA(0, "Failed to create Process!", inptr, MB_ICONERROR);
             return 0;
         }
         //   MessageBox(0, L"1", L"", 0);
@@ -61,8 +62,8 @@ HANDLE InjectSelfTo(LPCSTR inptr)
             MessageBoxA(0, "", "", 0);
             return 0;
         }
-
         currentThread = info->hThread;
+        tPid = info->dwProcessId;
     } while (0);
 
     HANDLE hHookStart = CreateRemoteThread(info->hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)
@@ -70,7 +71,7 @@ HANDLE InjectSelfTo(LPCSTR inptr)
 
     if (!hHookStart)
     {
-        MessageBox(0, L"无法创建远程线程(IAT HOOK)", L"错误", MB_ICONERROR);
+        MessageBox(0, L"Failed to create remote thread", L"error", MB_ICONERROR);
         return  0;
     }
     WaitForSingleObject(hHookStart, 0);
@@ -93,9 +94,9 @@ signed int Fakesub_5FC1C0()
         mov dword ptr[lesi], esi
         mov dword ptr[ledi], edi
     }
-    // SetWindowTextW(m_hWnd, L"进入hook");
+    // SetWindowTextW(m_hWnd, L"锟斤拷锟斤拷hook");
     ((int(*)(DWORD))::GetProcAddress(SelfHandle, "TranSplete"))(lecx);
-    //  SetWindowTextW(m_hWnd, L"hook结束");
+    //  SetWindowTextW(m_hWnd, L"hook锟斤拷锟斤拷");
     __asm {
         mov  eax, dword ptr[leax]
         mov  ebx, dword ptr[lebx]

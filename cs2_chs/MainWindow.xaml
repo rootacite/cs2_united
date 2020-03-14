@@ -5,8 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:cs2_chs"
         mc:Ignorable="d"
-        Title="MainWindow" Height="150" Width="450" ResizeMode="NoResize">
-    <Grid Loaded="Grid_Loaded">
-        
+        Title="MainWindow" Height="200" Width="600" ResizeMode="NoResize" Visibility="Visible">
+    <Grid Loaded="Grid_Loaded" MouseUp="Grid_MouseUp" MouseDown="Grid_MouseDown" Unloaded="Grid_Unloaded">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="74*"/>
+            <ColumnDefinition Width="223*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="01.jpg"/>
+        </Grid.Background>
+        <TextBox x:Name="TEXT_INPUT" HorizontalAlignment="Left" Height="120" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="574" AcceptsReturn="True" Grid.ColumnSpan="2">
+            <TextBox.BorderBrush>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFFFB700" Offset="0.027"/>
+                    <GradientStop Color="#FFFF9A9A" Offset="1"/>
+                </LinearGradientBrush>
+            </TextBox.BorderBrush>
+            <TextBox.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black" Offset="0"/>
+                    <GradientStop Color="#FFD8FFFB" Offset="1"/>
+                    <GradientStop Color="#99FFFFFF" Offset="0"/>
+                </LinearGradientBrush>
+            </TextBox.Background>
+        </TextBox>
+        <Button x:Name="apply"  Content="Apply" HorizontalAlignment="Left" Height="25" Margin="348.267,135,0,0" VerticalAlignment="Top" Width="88" Click="Button_Click" Grid.Column="1">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Red" Offset="0"/>
+                    <GradientStop Color="#7FFFBBBB" Offset="0.99"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <ProgressBar x:Name="PBS" HorizontalAlignment="Left" Height="25" Margin="103,135,0,0" VerticalAlignment="Top" Width="388" Visibility="Collapsed" Grid.ColumnSpan="2"/>
+        <Button Content="Show Japanese" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="88" Height="25" Click="Button_Click_1">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFFFEE00" Offset="0"/>
+                    <GradientStop Color="#8CFFFAB3" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
     </Grid>
+    <Window.Resources>
+        <RoutedUICommand x:Key="ShowMainWindow" Text="ShowMainWindow" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Alt" Key="N" Command="{StaticResource ShowMainWindow}"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource ShowMainWindow}"
+                    CanExecute="CommandBinding_ShowMainWindow_CanExecute"
+                    Executed="CommandBinding_ShowMainWindow_Executed"/>
+    </Window.CommandBindings>
 </Window>
