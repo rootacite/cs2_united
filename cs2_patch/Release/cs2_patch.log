@@ -1,8 +1,9 @@
-﻿  dllmain.cpp
+﻿  BuildIn.cpp
+  dllmain.cpp
     正在创建库 D:\VSProject\cs2\cs2_united\Release\cs2_patch.lib 和对象 D:\VSProject\cs2\cs2_united\Release\cs2_patch.exp
   正在生成代码
-  0 of 112 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  79 of 129 functions (61.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    6 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   cs2_patch.vcxproj -> D:\VSProject\cs2\cs2_united\Release\cs2_patch.dll

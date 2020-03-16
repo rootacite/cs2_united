@@ -1,11 +1,9 @@
 #include "pch.h"
 #include "Replace.h"
-
 int npID = 0;
 extern HMODULE hModL;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
 extern "C" extern DLLAPI int nID;
-
 void BuildCV(TESTDATA* pcv, TESTDATA flt, DWORD posinCross, DWORD posInLine, DWORD m_count, WCHAR nchar)
 {
     pcv->ForCast = flt.ForCast;
@@ -23,23 +21,17 @@ void BuildCV(TESTDATA* pcv, TESTDATA flt, DWORD posinCross, DWORD posInLine, DWO
     pcv->Flag7 = posInLine;
     pcv->Flag8 = flt.Flag8;
     pcv->Flagn8 = flt.Flagn8;
-
     pcv->FlagnW = flt.FlagnW;
     pcv->FlagnQ = flt.FlagnQ;
     pcv->nWQ = flt.nWQ;
     pcv->ntime = flt.ntime;
     pcv->ntime2 = flt.ntime2;
-
     pcv->Over1 = flt.Over1;
     pcv->Over2 = flt.Over2;
-
     return;
 }
-
 void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
 {
-
-
     wstring localString = ws;
     if (!pDf)return;
     if (!ws)return;
@@ -51,7 +43,6 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     TESTDATA loadFirst = *nCView;//�����һ������
     int posInLine = 0;//����λ��
     int posinCross = 0xD;//����λ��
-
   //  SetWindowTextW(m_hWnd, L"����ѭ��");
     for (int i = 0; i < localString.length(); i++)
     {
@@ -73,10 +64,8 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     }
     //  SetWindowTextW(m_hWnd, L"����ѭ��");
     *(DWORD*)(pDf + 4) = (DWORD)nCView;
-
     VirtualProtect(nCView, 10 + (localString.length() * 2), pOld, NULL);
 }
-
  int TranSplete(DWORD lp)
 {
     // MessageBox(0,L"Transplete start",L"",0);
@@ -89,18 +78,13 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     if (!Df)return -1;
     DWORD pEnd = *(DWORD*)(pDf + 4);
     if (!pEnd)return -1;
-
     WCHAR sjp[1024];
     WCHAR scn[1024];
-
     DWORD Num = (pEnd - Df) / 96;
-
     wstring nStr;
     TESTDATA* nCView = (TESTDATA*)Df;
-
     for (DWORD i = 0; i < Num; i++) {
         if (nCView->nChar == 0xFFFF) {
-
         }
         else if (nCView->nChar == 0) {
             nStr += L'\n';
@@ -108,7 +92,6 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
         else {
             nStr += nCView->nChar;
         }
-
         nCView++;
     }
     npID++;
@@ -123,23 +106,17 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id)
     }
     // MessageBoxW(0, L"1", L"", 0);
     if (lstrcmpW(nStr.c_str(), cscn) == 0) {
-
         //     MessageBoxW(0, nStr.c_str(), L"", 0);
         return -1;
     }
-
     //  MessageBoxW(0, L"2", L"", 0);
     if (wcsstr(nStr.c_str(), L"………")) {
-
         return -1;
     }
     if (wcsstr(nStr.c_str(), L"…ああ"))
         return -1;
-
     if (wcsstr(nStr.c_str(), L"ふふふっ"))
         return -1;
-
-
     lstrcpyW(ms_str, nStr.c_str());
     if (!GetDataByID(nID, sjp, scn)) {
         int pID = 0;

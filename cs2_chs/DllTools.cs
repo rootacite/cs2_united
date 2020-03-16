@@ -6,23 +6,18 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.IO;
 using Microsoft.IdentityModel.Logging;
-
 namespace cs2_chs
 {
     class DllTools
     {
         [DllImport("kernel32.dll")]
         public static extern uint GetLastError();
-
         [DllImport("kernel32.dll", EntryPoint = "LoadLibraryEx", SetLastError = true)]
         public static extern int LoadLibraryEx(string lpFileName, IntPtr hReservedNull, LoadLibraryFlags dwFlags);
-
         [DllImport("Kernel32", EntryPoint = "GetProcAddress", SetLastError = true)]
         public static extern int GetProcAddress(int handle, string funcname);
-
         [DllImport("Kernel32", EntryPoint = "FreeLibrary", SetLastError = true)]
         private static extern int FreeLibrary(int handle);
-
         [DllImport("kernel32.dll", EntryPoint = "GetModuleHandleA", SetLastError = true)]
         public static extern int GetModuleHandleA(string lpFileName);
         public static Delegate GetFunctionAddress(int dllModule, string functionName, Type t)
@@ -33,8 +28,6 @@ namespace cs2_chs
             else
                 return Marshal.GetDelegateForFunctionPointer(new IntPtr(address), t);
         }
-
-
         public static Delegate GetDelegateFromIntPtr(IntPtr address, Type t)
         {
             if (address == IntPtr.Zero)
@@ -42,8 +35,6 @@ namespace cs2_chs
             else
                 return Marshal.GetDelegateForFunctionPointer(address, t);
         }
-
-
         public static Delegate GetDelegateFromIntPtr(int address, Type t)
         {
             if (address == 0)
@@ -51,25 +42,19 @@ namespace cs2_chs
             else
                 return Marshal.GetDelegateForFunctionPointer(new IntPtr(address), t);
         }
-
-
         public static int LoadSDK(string lpFileName)
         {
             if (File.Exists(lpFileName))
             {
                 var hReservedNull = IntPtr.Zero;
                 var dwFlags = LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH;
-
                 var result = LoadLibraryEx(lpFileName, hReservedNull, dwFlags);
-
                 var errCode = GetLastError();
                 LogHelper.LogInformation($"LoadSDK Result:{result}, ErrorCode: {errCode}");
-
                 return result;
             }
             return 0;
         }
-
         public static int ReleaseSDK(int handle)
         {
             try
@@ -90,59 +75,48 @@ namespace cs2_chs
                 return -1;
             }
         }
-
         public enum LoadLibraryFlags : uint
         {
             /// <summary>
             /// DONT_RESOLVE_DLL_REFERENCES
             /// </summary>
             DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
-
             /// <summary>
             /// LOAD_IGNORE_CODE_AUTHZ_LEVEL
             /// </summary>
             LOAD_IGNORE_CODE_AUTHZ_LEVEL = 0x00000010,
-
             /// <summary>
             /// LOAD_LIBRARY_AS_DATAFILE
             /// </summary>
             LOAD_LIBRARY_AS_DATAFILE = 0x00000002,
-
             /// <summary>
             /// LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE
             /// </summary>
             LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE = 0x00000040,
-
             /// <summary>
             /// LOAD_LIBRARY_AS_IMAGE_RESOURCE
             /// </summary>
             LOAD_LIBRARY_AS_IMAGE_RESOURCE = 0x00000020,
-
             /// <summary>
             /// LOAD_LIBRARY_SEARCH_APPLICATION_DIR
             /// </summary>
             LOAD_LIBRARY_SEARCH_APPLICATION_DIR = 0x00000200,
-
             /// <summary>
             /// LOAD_LIBRARY_SEARCH_DEFAULT_DIRS
             /// </summary>
             LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000,
-
             /// <summary>
             /// LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR
             /// </summary>
             LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100,
-
             /// <summary>
             /// LOAD_LIBRARY_SEARCH_SYSTEM32
             /// </summary>
             LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800,
-
             /// <summary>
             /// LOAD_LIBRARY_SEARCH_USER_DIRS
             /// </summary>
             LOAD_LIBRARY_SEARCH_USER_DIRS = 0x00000400,
-
             /// <summary>
             /// LOAD_WITH_ALTERED_SEARCH_PATH
             /// </summary>
@@ -155,34 +129,21 @@ namespace cs2_chs
         public static extern int GetModuleHandle(string lpModuleName);
         [DllImport("kernel32.dll", EntryPoint = "ReadProcessMemory")]
         public static extern int _MemoryReadByteSet(int hProcess, int lpBaseAddress, byte[] lpBuffer, int nSize, int lpNumberOfBytesRead);
-
         [DllImport("kernel32.dll", EntryPoint = "ReadProcessMemory")]
         public static extern int _MemoryReadInt32(int hProcess, int lpBaseAddress, ref int lpBuffer, int nSize, int lpNumberOfBytesRead);
-
         [DllImport("kernel32.dll", EntryPoint = "WriteProcessMemory")]
         public static extern int _MemoryWriteByteSet(int hProcess, int lpBaseAddress, byte[] lpBuffer, int nSize, int lpNumberOfBytesWritten);
-
         [DllImport("kernel32.dll", EntryPoint = "WriteProcessMemory")]
         public static extern int _MemoryWriteInt32(int hProcess, int lpBaseAddress, ref int lpBuffer, int nSize, int lpNumberOfBytesWritten);
-
         [DllImport("kernel32.dll", EntryPoint = "GetCurrentProcess")]
         public static extern int GetCurrentProcess();
-
         [DllImport("kernel32.dll", EntryPoint = "OpenProcess")]
         public static extern int OpenProcess(int dwDesiredAccess, int bInheritHandle, int dwProcessId);
-
         [DllImport("kernel32.dll", EntryPoint = "CloseHandle")]
         public static extern int CloseHandle(int hObject);
-
         [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory")]
         public static extern int _CopyMemory_ByteSet_Float(ref float item, ref byte source, int length);
-
-
         const int PROCESS_POWER_MAX = 2035711;
-
-
-
-
         /// <summary>
         /// 读内存整数型
         /// </summary>
@@ -204,7 +165,6 @@ namespace cs2_chs
                 return num;
             }
         }
-
         /// <summary>
         /// 写内存整数型
         /// </summary>
@@ -219,7 +179,6 @@ namespace cs2_chs
             MProcess.CloseHandle(handle);
             return num2 != 0;
         }
-
         /// <summary>
         /// 读内存小数型
         /// </summary>
@@ -241,7 +200,6 @@ namespace cs2_chs
                 return MProcess.GetFloatFromByteSet(array, 0);
             }
         }
-
         /// <summary>
         /// 写内存小数型
         /// </summary>
@@ -256,7 +214,6 @@ namespace cs2_chs
                                                           //byte[] byteSet = Encoding.GetEncoding("gb2312").GetBytes(value.ToString());
             return MProcess.WriteMemoryByteSet(pID, bAddress, byteSet, 0);
         }
-
         /// <summary>
         /// 写内存字节集
         /// </summary>
@@ -273,7 +230,6 @@ namespace cs2_chs
                                                                                       //MProcess.CloseHandle(pID);
             return tmp != 0;
         }
-
         /// <summary>
         /// 取空白字节集
         /// </summary>
@@ -292,7 +248,6 @@ namespace cs2_chs
             }
             return Encoding.UTF8.GetBytes(text);
         }
-
         /// <summary>
         /// 取进程句柄
         /// </summary>
@@ -309,7 +264,6 @@ namespace cs2_chs
                 return MProcess.OpenProcess(PROCESS_POWER_MAX, 0, pID);
             }
         }
-
         /// <summary>
         /// 字节集转小数型
         /// </summary>
@@ -322,7 +276,6 @@ namespace cs2_chs
             MProcess._CopyMemory_ByteSet_Float(ref result, ref sourceValue[index], 4);
             return result;
         }
-
         /// <summary>
         /// 获取字节集
         /// </summary>

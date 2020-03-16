@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:cs2_chs"
         mc:Ignorable="d"
-        Title="MainWindow" Height="200" Width="600" ResizeMode="NoResize" Visibility="Visible">
+        Title="Text Controler" Height="200" Width="600" ResizeMode="NoResize" Visibility="Visible" UseLayoutRounding="False">
     <Grid Loaded="Grid_Loaded" MouseUp="Grid_MouseUp" MouseDown="Grid_MouseDown" Unloaded="Grid_Unloaded">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="74*"/>
@@ -51,7 +51,7 @@
         <RoutedUICommand x:Key="ShowMainWindow" Text="ShowMainWindow" />
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Modifiers="Alt" Key="N" Command="{StaticResource ShowMainWindow}"/>
+        <KeyBinding Modifiers="Alt" Key="A" Command="{StaticResource ShowMainWindow}"/>
     </Window.InputBindings>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource ShowMainWindow}"

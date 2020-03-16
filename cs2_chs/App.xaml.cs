@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-
 namespace cs2_chs
 {
     /// <summary>
@@ -15,28 +14,23 @@ namespace cs2_chs
     public partial class App : Application
     {
     }
-
     public class ImageButton : System.Windows.Controls.Button
     {
-
         /// <summary>
         /// 图片
         /// </summary>
         public static readonly DependencyProperty ImageProperty = DependencyProperty.Register("Image", typeof(ImageSource), typeof(ImageButton),
             new PropertyMetadata(null));
-
         /// <summary>
         /// 图片的宽度
         /// </summary>
         public static readonly DependencyProperty ImageWidthProperty = DependencyProperty.Register("ImageWidth", typeof(double), typeof(ImageButton),
             new PropertyMetadata(double.NaN));
-
         /// <summary>
         /// 图片的高度
         /// </summary>
         public static readonly DependencyProperty ImageHeightProperty = DependencyProperty.Register("ImageHeight", typeof(double), typeof(ImageButton),
             new PropertyMetadata(double.NaN));
-
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -45,7 +39,6 @@ namespace cs2_chs
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ImageButton),
                 new System.Windows.FrameworkPropertyMetadata(typeof(ImageButton)));
         }
-
         /// <summary>
         /// 设置图片
         /// </summary>
@@ -60,7 +53,6 @@ namespace cs2_chs
                 SetValue(ImageProperty, value);
             }
         }
-
         /// <summary>
         /// 图片宽度(属性)
         /// </summary>
@@ -75,7 +67,6 @@ namespace cs2_chs
                 SetValue(ImageWidthProperty, value);
             }
         }
-
         /// <summary>
         /// 图片高度(属性)
         /// </summary>
@@ -90,6 +81,5 @@ namespace cs2_chs
                 SetValue(ImageHeightProperty, value);
             }
         }
-
     }
 }

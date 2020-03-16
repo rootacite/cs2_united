@@ -1,14 +1,15 @@
 d:\vsproject\cs2\cs2_united\cs2_patch\release\cs2_patch.pch
 d:\vsproject\cs2\cs2_united\cs2_patch\release\vc142.pdb
 d:\vsproject\cs2\cs2_united\cs2_patch\release\pch.obj
-d:\vsproject\cs2\cs2_united\cs2_patch\release\dllmain.obj
 d:\vsproject\cs2\cs2_united\cs2_patch\release\replace.obj
-d:\vsproject\cs2\cs2_united\cs2_patch\release\buildin.obj
+d:\vsproject\cs2\cs2_united\cs2_patch\release\dllmain.obj
 d:\vsproject\cs2\cs2_united\cs2_patch\release\data.obj
+d:\vsproject\cs2\cs2_united\cs2_patch\release\buildin.obj
 d:\vsproject\cs2\cs2_united\release\cs2_patch.lib
 d:\vsproject\cs2\cs2_united\release\cs2_patch.exp
 d:\vsproject\cs2\cs2_united\release\cs2_patch.ipdb
 d:\vsproject\cs2\cs2_united\release\cs2_patch.iobj
+d:\vsproject\cs2\cs2_united\release\cs2_patch.dll
 d:\vsproject\cs2\cs2_united\release\cs2_patch.pdb
 d:\vsproject\cs2\cs2_united\cs2_patch\release\cs2_patch.tlog\cl.command.1.tlog
 d:\vsproject\cs2\cs2_united\cs2_patch\release\cs2_patch.tlog\cl.read.1.tlog
