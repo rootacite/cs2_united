@@ -12,6 +12,8 @@ extern "C" DLLAPI int nID = 0;
 extern "C" DLLAPI DWORD tPid = 0;
 extern "C" DLLAPI DWORD m_Addr = 0xFFFFFFFF;
 extern "C" DLLAPI DWORD VioMode = 0;
+
+extern "C" DLLAPI bool blockRestoreSrc = false;
 #pragma data_seg()
 #pragma comment(linker, "/section:PublicData,rws")
 

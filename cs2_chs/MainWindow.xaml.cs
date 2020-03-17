@@ -38,6 +38,7 @@ namespace cs2_chs
         //TestA
         public static InitData initdata = new InitData();
         public Advance AdvanceSetting = new Advance();//ChangeGToT
+        public static MainWindow thisPfc;
 
         [DllImport("cs2_patch.dll", EntryPoint = "ChangeGToT")]
         public static extern void ChangeGToT();
@@ -50,12 +51,17 @@ namespace cs2_chs
         public static extern void StartReplace();
         [DllImport("cs2_patch.dll", EntryPoint = "EndReplace")]
         public static extern void EndReplace();
+        [DllImport("Kernel32.dll", EntryPoint = "WaitOnAddress")]
+        public extern static bool WaitOnAddress(uint Address, uint CompareAddress, uint AddressSize, uint dwMilliseconds);
+        [DllImport("Kernel32.dll", EntryPoint = "WakeByAddressSingle")]
+        public extern static void WakeByAddressSingle(uint Address);
+
         [DllImport("Kernel32.dll", EntryPoint = "WaitForSingleObject")]
         public extern static int WaitForSingleObject(uint hHandle, uint dwMilliseconds);
         [DllImport("cs2_patch.dll", EntryPoint = "InjectSelfTo")]
         public static extern uint pStart(string path);
         [DllImport("cs2_patch.dll", EntryPoint = "CreateDataExport")]
-        public static extern void CreateData([MarshalAs(UnmanagedType.LPWStr)] string path);
+        public static extern void CreateData([MarshalAs(UnmanagedType.LPWStr)] string src,[MarshalAs(UnmanagedType.LPWStr)] string path);
         [DllImport("Kernel32.dll", EntryPoint = "TerminateProcess")]
         public static extern bool TerminateProcess(uint hThread, uint dwExitCode);
         [DllImport("Kernel32.dll", EntryPoint = "OpenProcess")]
@@ -68,6 +74,8 @@ namespace cs2_chs
         public static uint ns_str = 0;
         public static uint ptPid = 0;
         public  static uint ppMode;
+        public static uint nID;
+        public static uint pblockRestoreSrc;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if(this.Visibility != Visibility.Visible){
@@ -105,7 +113,7 @@ namespace cs2_chs
            // MessageBox.Show("");
             TestA();
             int hMod = DllTools.GetModuleHandleA("cs2_patch.dll");
-         
+            thisPfc = this;
             if (!initdata.successedLoad)
             {
                 MessageBox.Show("error:failed to load Init.xml!","Error!",MessageBoxButton.OK,MessageBoxImage.Error);
@@ -126,8 +134,13 @@ namespace cs2_chs
             AdvanceSetting.AddressEdit.Foreground = new SolidColorBrush(Colors.Black);
             AdvanceSetting.EnvioMode.IsChecked = initdata.Envio;
             AdvanceSetting.EnvioMode.Foreground = new SolidColorBrush(Colors.Black);
-         
 
+            pblockRestoreSrc = (uint)DllTools.GetProcAddress(hMod, "blockRestoreSrc");
+            unsafe
+            {
+                (*(bool*)pblockRestoreSrc) = initdata.Envio;
+            }
+          
           //  MessageBox.Show("");
             switch (initdata.VioMode)
             {
@@ -148,6 +161,7 @@ namespace cs2_chs
                 AdvanceSetting.OM_GPY.IsEnabled = true;
                 AdvanceSetting.OM_TOT.IsEnabled = true;
                 AdvanceSetting.OutPutLog.IsEnabled = true;
+                SRC_OUTPUT.IsReadOnly = false;
                 EndReplace();
             }
             else
@@ -163,7 +177,8 @@ namespace cs2_chs
             ms_str = (uint)DllTools.GetProcAddress(hMod, "ms_str");
             ns_str = (uint)DllTools.GetProcAddress(hMod, "ns_str");
             ptPid = (uint)DllTools.GetProcAddress(hMod, "tPid");
-          
+            nID= (uint)DllTools.GetProcAddress(hMod, "nID");
+
             Thread threadExit = new Thread(delegate ()
             {
                 WaitForSingleObject(hThread, 0xFFFFFFFF);
@@ -173,6 +188,35 @@ namespace cs2_chs
                 });
             });
             threadExit.Start();
+
+            Thread thread3 = new Thread(delegate ()
+            {
+                while (true)
+                {
+                  
+                    unsafe
+                    {
+                        while (*(bool*)pblockRestoreSrc)
+                        {
+                            // bool aloc = true;
+                            //MessageBox.Show("");
+                            //WaitOnAddress(pblockRestoreSrc, (uint)&aloc, sizeof(bool), 0xFFFFFFFF);
+                            Thread.Sleep(10);
+                        }
+
+                        char* pms_str = (char*)ms_str;
+                        string MsStr = new string(pms_str);
+                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                        {
+                            SRC_OUTPUT.Text = MsStr;
+                        });
+                    }
+                    Thread.Sleep(50);
+                }
+            });
+            thread3.Start();
+           // MessageBox.Show("");
+           Advance.threadRestore.Start();
         }
         
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -187,13 +231,15 @@ namespace cs2_chs
             Thread thread1 = new Thread(delegate ()
             {
                 string LocalS = "";
+                string LocalP = "";
                 this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
                 {
                     LocalS = TEXT_INPUT.Text;
+                    LocalP = SRC_OUTPUT.Text;
                 });
-                CreateData(LocalS);
+                CreateData(LocalP, LocalS);
             });
-            thread1.Start();
+
             Thread thread2 = new Thread(delegate ()
             {
                 unsafe
@@ -204,6 +250,7 @@ namespace cs2_chs
                         apply.IsEnabled = false;
                         PBS.Visibility = Visibility.Visible;
                     });
+                    *saveProcess = 0;
                     while (*saveProcess != 1)
                     {
                         this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
@@ -221,6 +268,7 @@ namespace cs2_chs
                 }
             });
             thread2.Start();
+            thread1.Start();
         }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {

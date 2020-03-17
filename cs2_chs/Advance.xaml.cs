@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Threading;
+using System.Windows.Threading;
+
 namespace cs2_chs
 {
     /// <summary>
@@ -19,10 +22,68 @@ namespace cs2_chs
     public partial class Advance : Window
     {
         public bool enChanged = false;
+        static public Thread threadRestore;
+        bool enFaileden = false;
+
         public Advance()
         {
             InitializeComponent();
+            REASE.IsChecked = false;
             this.Closing += Window_Closing;
+            Thread threadExit = new Thread(delegate ()
+            {
+                while (true)
+                {
+                    unsafe
+                    {
+                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                        {
+                            if (MainWindow.nID != 0)
+                                IDnPut.Text = Convert.ToString((*(uint*)MainWindow.nID) - 1, 10);
+                        });
+                        Thread.Sleep(100);
+                    }
+                }
+            });
+            threadExit.Start();
+
+            threadRestore = new Thread(delegate ()
+            {
+                unsafe
+                {
+
+                    while (true)
+                    {
+
+                        string loacl = new string((char*)MainWindow.ns_str);
+                        string lobnob = "";
+                        if (enFaileden) 
+                        {
+                            char lob = '\0';
+                            foreach (char t in loacl)
+                            {
+                                if (t != lob)
+                                {
+                                    lobnob += t;
+                                    lob = t;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            lobnob = loacl;
+                            //MessageBox.Show("");
+                        }
+                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                        {
+                            TRAN_OPT.Text = lobnob;
+                            OutPutLog.Text = loacl;
+                        });
+                        Thread.Sleep(50);
+                    }
+                }
+            });
+
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -55,6 +116,11 @@ namespace cs2_chs
                 OM_TOT.IsEnabled = true;
                 OutPutLog.IsEnabled = true;
                 MainWindow.EndReplace();
+                MainWindow.thisPfc.SRC_OUTPUT.IsReadOnly = false;
+                unsafe
+                {
+                    (*(bool*)MainWindow.pblockRestoreSrc) = true;
+                }
             }
             else
             {
@@ -62,6 +128,11 @@ namespace cs2_chs
                 OM_TOT.IsEnabled = false;
                 OutPutLog.IsEnabled = false;
                 MainWindow.StartReplace();
+                MainWindow.thisPfc.SRC_OUTPUT.IsReadOnly = true;
+                unsafe
+                {
+                    (*(bool*)MainWindow.pblockRestoreSrc) = false;
+                }
             }
             MessageBox.Show("👴知道🌶！\n🍋の🐍☞已经应用🌶！\n暴力提取之外的设置将会在下次启动时按照更改后的设置工作。");
         }
@@ -111,9 +182,18 @@ namespace cs2_chs
         {
             unsafe
             {
-                string loacl = new string((char*)MainWindow.ns_str);
-                OutPutLog.Text = loacl;
+             
             }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            enFaileden = true;
+        }
+
+        private void REASE_Unchecked(object sender, RoutedEventArgs e)
+        {
+            enFaileden = false;
         }
     }
 }

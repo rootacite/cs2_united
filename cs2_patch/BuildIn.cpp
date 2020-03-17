@@ -198,11 +198,11 @@ DWORD WINAPI fGetGlyphOutlineW(
     if(lstrlenW(ns_str)>=5999)
         ns_str[0] = L'\0';
     lstrcatW(ns_str, loca.c_str());
-    return pGetGlyphOutlineW(hdc, L'A', fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
+    return pGetGlyphOutlineW(hdc, L' ', fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
 }
 BOOL  WINAPI fTextOutW(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWSTR lpString, _In_ int c)
 {
-    return pTextOutW(hdc, x, y, L"A", c);
+    return pTextOutW(hdc, x, y, L"\0", c);
 }
 void start()
 {

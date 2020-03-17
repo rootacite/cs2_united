@@ -10,6 +10,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="03.png"/>
         </Grid.Background>
+        <GroupBox Header="GroupBox" HorizontalAlignment="Left" Height="100" Margin="477,169,0,0" VerticalAlignment="Top" Width="187"/>
         <GroupBox Header="提取模式" HorizontalAlignment="Left" Height="82" Margin="52,116,0,0" VerticalAlignment="Top" Width="144"/>
         <TextBox x:Name="StartUpEdit" HorizontalAlignment="Left" Height="30" Margin="96,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="163" FontSize="22" TextChanged="StartUpEdit_TextChanged"/>
         <TextBlock HorizontalAlignment="Left" Margin="6,20,0,0" TextWrapping="Wrap" Text="启动目标：" VerticalAlignment="Top" Height="29" FontSize="16"/>
@@ -23,7 +24,7 @@
         <CheckBox x:Name="EnvioMode" Content="暴力替换" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Height="16" Click="EnvioMode_Click"/>
         <RadioButton x:Name="OM_GPY" Content="GetGlyphOutLine" HorizontalAlignment="Left" Margin="76,148,0,0" VerticalAlignment="Top" Checked="OM_GPY_Checked"/>
         <RadioButton x:Name="OM_TOT" Content="TextOut" HorizontalAlignment="Left" Margin="76,168,0,0" VerticalAlignment="Top" Checked="OM_TOT_Checked"/>
-        <TextBox x:Name="OutPutLog" HorizontalAlignment="Left" Height="133" Margin="52,216,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="373">
+        <TextBox x:Name="OutPutLog" HorizontalAlignment="Left" Height="133" Margin="52,216,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="373">
             <TextBox.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#67DBFEFF" Offset="0.528"/>
@@ -32,5 +33,17 @@
             </TextBox.Background>
         </TextBox>
         <TextBlock HorizontalAlignment="Left" Margin="2,198,0,0" TextWrapping="Wrap" Text="输出记录：" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="325,13,0,0" TextWrapping="Wrap" Text="当前的ID：" VerticalAlignment="Top" FontSize="16"/>
+        <TextBox IsReadOnly="True" x:Name="IDnPut" HorizontalAlignment="Left" Height="30" Margin="409,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="146" FontSize="18"/>
+        <TextBox x:Name="TRAN_OPT" HorizontalAlignment="Left" Height="107" Margin="409,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="284" FontSize="16">
+            <TextBox.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#75E8FFE2" Offset="0"/>
+                    <GradientStop Color="#FF34FF00" Offset="1"/>
+                </LinearGradientBrush>
+            </TextBox.Background>
+        </TextBox>
+        <TextBlock HorizontalAlignment="Left" Margin="292,57,0,0" TextWrapping="Wrap" Text="转换后的文本：" VerticalAlignment="Top" Height="29" FontSize="16"/>
+        <CheckBox x:Name="REASE" Content="去除重复字符（ああー＞あ）" HorizontalAlignment="Left" Margin="497,198,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="REASE_Unchecked"/>
     </Grid>
 </Window>
