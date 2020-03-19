@@ -1,9 +1,2 @@
-﻿  pch.cpp
-  BuildIn.cpp
-  Data.cpp
-  dllmain.cpp
-  Replace.cpp
-D:\VSProject\cs2\cs2_united\cs2_patch\Replace.cpp(56,23): warning C4018: “<”: 有符号/无符号不匹配
-  正在生成代码...
-    正在创建库 D:\VSProject\cs2\cs2_united\Debug\cs2_patch.lib 和对象 D:\VSProject\cs2\cs2_united\Debug\cs2_patch.exp
+﻿  BuildIn.cpp
   cs2_patch.vcxproj -> D:\VSProject\cs2\cs2_united\Debug\cs2_patch.dll

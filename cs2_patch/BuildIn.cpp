@@ -1,17 +1,22 @@
 #include "pch.h"
 #include "BuildIn.h"
 #include "Data.h"
+#include "Replace.h"
+
+/*********声明符号***********/
 
 extern "C" extern DLLAPI wchar_t ns_str[6192];
 extern HMODULE hMod;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
 extern "C" extern DLLAPI int nID;
 extern "C" extern DLLAPI DWORD tPid;
+
 extern MicroData* Index;
 extern MicroBinary* Data;
+
 extern "C" extern DLLAPI DWORD m_Addr;
 extern "C" extern DLLAPI DWORD VioMode;
-
+extern "C" extern DLLAPI bool IsSuccess;
 signed int (*Sur_Sub)() = (signed int(*)(void))m_Addr;//real function point
 HMODULE SelfHandle = NULL;
 
@@ -19,6 +24,11 @@ bool start_falg = false;
 bool start_g_flag = false;
 bool start_t_flag = false;
 
+extern char IpfData[16];
+#define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
+
+
+TESTDATA* pNewDf = NULL;
 PVOID GetProcAddressEx(HANDLE hProc, HMODULE hModule, LPCSTR lpProcName)
 {
     PVOID pAddress = NULL;
@@ -97,9 +107,6 @@ BOOL InjectDLL(HANDLE hProcess, LPCWSTR dllFilePathName)
     return TRUE;
 }
 
-extern char IpfData[16];
-#define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
-
 DWORD(WINAPI* pGetGlyphOutlineW)(
     _In_ HDC hdc,
     _In_ UINT uChar,
@@ -111,6 +118,8 @@ DWORD(WINAPI* pGetGlyphOutlineW)(
     ) = GetGlyphOutlineW;
 BOOL(WINAPI* pTextOutW)(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWSTR lpString, _In_ int c) = TextOutW;
 
+/*****************************/
+int(*TranSpt)(DWORD);
 HANDLE InjectSelfTo(LPCSTR inptr)
 {
  //   MessageBoxA(0, inptr,"",0);
@@ -148,29 +157,22 @@ HANDLE InjectSelfTo(LPCSTR inptr)
     delete info;
     lstrcpyW(ms_str, L" ");
     ns_str[0] = L'\0';
+
     return  currentThread;
 }
+DWORD lecx;
 signed int Fake_Sub()
 {
-    DWORD leax, lebx, lecx, ledx, lesi, ledi;
     __asm {
-        mov dword ptr[leax], eax
-        mov dword ptr[lebx], ebx
         mov dword ptr[lecx], ecx
-        mov dword ptr[ledx], edx
-        mov dword ptr[lesi], esi
-        mov dword ptr[ledi], edi
     }
     // SetWindowTextW(m_hWnd, L"����hook");
-    ((int(*)(DWORD))::GetProcAddress(SelfHandle, "TranSplete"))(lecx);
+ //   MessageBoxA(0,"","",0);
+    TranSpt(lecx);
+
     //  SetWindowTextW(m_hWnd, L"hook����");
     __asm {
-        mov  eax, dword ptr[leax]
-        mov  ebx, dword ptr[lebx]
         mov ecx, dword ptr[lecx]
-        mov edx, dword ptr[ledx]
-        mov  esi, dword ptr[lesi]
-        mov edi, dword ptr[ledi]
     }
     return Sur_Sub();
 }
@@ -204,6 +206,8 @@ BOOL  WINAPI fTextOutW(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWS
 {
     return pTextOutW(hdc, x, y, L"\0", c);
 }
+
+
 void start()
 {
    // MessageBoxA(0,"b","",0);
@@ -251,7 +255,6 @@ void end()
     DetourDetach(&(PVOID&)pGetGlyphOutlineW, fGetGlyphOutlineW);
     DetourTransactionCommit();
 }
-
  void start_t()
  {
      if (start_t_flag)
@@ -311,7 +314,7 @@ void StartReplace()
     CloseHandle(terp);
 
 }
- void EndReplace()
+void EndReplace()
  {
      HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
      HANDLE hHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
@@ -347,7 +350,7 @@ void StartReplace()
     }
     CloseHandle(terp);
  }
-  void ChangeGToT()
+void ChangeGToT()
  {
       HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
       HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
@@ -369,7 +372,7 @@ void StartReplace()
       WaitForSingleObject(htHookStart, 0xFFFFFFFF);
       CloseHandle(terp);
  }
-  void ChangeTToG()
+void ChangeTToG()
  {
       HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
       HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
@@ -391,10 +394,12 @@ void StartReplace()
       WaitForSingleObject(htHookStart, 0xFFFFFFFF);
       CloseHandle(terp);
  }
- void LoadExerte()
+void LoadExerte()
 {
     Index = new MicroData(L"Index.ax", sizeof(IndexData));
     Data = new MicroBinary(L"Data.ax");
     Index->Load();
     Data->Load();
+
+    TranSpt = (int(*)(DWORD))::GetProcAddress(SelfHandle, "TranSplete");
 }

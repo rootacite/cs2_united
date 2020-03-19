@@ -22,22 +22,11 @@ namespace cs2_chs
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     /// 
-    
-    public static class StrMop
-    {
-        public static char CharAt(this string str, int index)
-        {
-            if (index > str.Length)
-                return ' ';
-            string res = str.Substring(index, 1);
-            return Convert.ToChar(res);
-        }
-    }
     public partial class MainWindow : Window
     {
         //TestA
-        public static InitData initdata = new InitData();
-        public Advance AdvanceSetting = new Advance();//ChangeGToT
+        public static InitData initdata = new InitData();//加载初始化信息
+        public Advance AdvanceSetting = new Advance();//加载高级设置窗口
         public static MainWindow thisPfc;
 
         [DllImport("cs2_patch.dll", EntryPoint = "ChangeGToT")]
@@ -76,6 +65,8 @@ namespace cs2_chs
         public  static uint ppMode;
         public static uint nID;
         public static uint pblockRestoreSrc;
+        public static uint cn_str = 0;
+        public static uint IsSuccess = 0;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if(this.Visibility != Visibility.Visible){
@@ -178,6 +169,8 @@ namespace cs2_chs
             ns_str = (uint)DllTools.GetProcAddress(hMod, "ns_str");
             ptPid = (uint)DllTools.GetProcAddress(hMod, "tPid");
             nID= (uint)DllTools.GetProcAddress(hMod, "nID");
+            cn_str = (uint)DllTools.GetProcAddress(hMod, "cn_str");
+            IsSuccess= (uint)DllTools.GetProcAddress(hMod, "IsSuccess");
 
             Thread threadExit = new Thread(delegate ()
             {
@@ -203,11 +196,20 @@ namespace cs2_chs
                             //WaitOnAddress(pblockRestoreSrc, (uint)&aloc, sizeof(bool), 0xFFFFFFFF);
                             Thread.Sleep(10);
                         }
-
+                       
                         char* pms_str = (char*)ms_str;
                         string MsStr = new string(pms_str);
                         this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
                         {
+                            if (*(bool*)IsSuccess)
+                            {
+                              //  MessageBox.Show("");
+                                TEXT_INPUT.BorderBrush = new SolidColorBrush(Colors.Green);
+                            }
+                            else
+                            {
+                                TEXT_INPUT.BorderBrush = new SolidColorBrush(Colors.Red);
+                            }
                             SRC_OUTPUT.Text = MsStr;
                         });
                     }
@@ -237,6 +239,10 @@ namespace cs2_chs
                     LocalS = TEXT_INPUT.Text;
                     LocalP = SRC_OUTPUT.Text;
                 });
+                if (initdata.Envio)
+                {
+                    Advance.UnTranSpleteProc(ref LocalP);
+                }
                 CreateData(LocalP, LocalS);
             });
 
@@ -274,8 +280,8 @@ namespace cs2_chs
         {
             unsafe
             {
-                char* pms_str = (char*)ms_str;
-                string MsStr = new string(pms_str);
+                char* pcn_str = (char*)cn_str;
+                string MsStr = new string(pcn_str);
                 TEXT_INPUT.Text = MsStr;
             }
         }

@@ -23,8 +23,50 @@ namespace cs2_chs
     {
         public bool enChanged = false;
         static public Thread threadRestore;
-        bool enFaileden = false;
+        static bool enFaileden = false;
+        static public void TranSpleteProc(ref string itoc)
+        {
+            string pitoc = itoc;
+          
 
+            if (enFaileden)
+            {
+                itoc = "";
+                char lob = '\0';
+                foreach (char t in pitoc)
+                {
+                    if (t != lob)
+                    {
+                        itoc += t;
+                        lob = t;
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        static public void UnTranSpleteProc(ref string itoc)
+        {
+            string pitoc = itoc;
+
+
+            if (enFaileden)
+            {
+                itoc = "";
+                foreach (char t in pitoc)
+                {
+                    itoc += t;
+                    itoc += t;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
         public Advance()
         {
             InitializeComponent();
@@ -39,7 +81,7 @@ namespace cs2_chs
                         this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
                         {
                             if (MainWindow.nID != 0)
-                                IDnPut.Text = Convert.ToString((*(uint*)MainWindow.nID) - 1, 10);
+                                IDnPut.Text = Convert.ToString(*(int*)MainWindow.nID, 10);
                         });
                         Thread.Sleep(100);
                     }
@@ -56,24 +98,9 @@ namespace cs2_chs
                     {
 
                         string loacl = new string((char*)MainWindow.ns_str);
-                        string lobnob = "";
-                        if (enFaileden) 
-                        {
-                            char lob = '\0';
-                            foreach (char t in loacl)
-                            {
-                                if (t != lob)
-                                {
-                                    lobnob += t;
-                                    lob = t;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            lobnob = loacl;
-                            //MessageBox.Show("");
-                        }
+                        string lobnob = loacl;
+
+                        TranSpleteProc(ref lobnob);
                         this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
                         {
                             TRAN_OPT.Text = lobnob;

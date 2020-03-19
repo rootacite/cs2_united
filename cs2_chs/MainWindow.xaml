@@ -14,13 +14,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="01.jpg"/>
         </Grid.Background>
-        <TextBox x:Name="TEXT_INPUT" HorizontalAlignment="Left" Height="100" Margin="10,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="573" AcceptsReturn="True" Grid.ColumnSpan="2" FontSize="18">
-            <TextBox.BorderBrush>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFFFB700" Offset="0.027"/>
-                    <GradientStop Color="#FFFF9A9A" Offset="1"/>
-                </LinearGradientBrush>
-            </TextBox.BorderBrush>
+        <TextBox x:Name="TEXT_INPUT" HorizontalAlignment="Left" Height="100" Margin="10,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="574" AcceptsReturn="True" Grid.ColumnSpan="2" FontSize="18" BorderBrush="Red">
             <TextBox.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black" Offset="0"/>
@@ -29,16 +23,14 @@
                 </LinearGradientBrush>
             </TextBox.Background>
         </TextBox>
-        <Button x:Name="apply"  Content="Apply" HorizontalAlignment="Left" Height="25" Margin="348,220,0,0" VerticalAlignment="Top" Width="88" Click="Button_Click" Grid.Column="1">
+        <Button x:Name="apply"  Content="Apply" HorizontalAlignment="Left" Height="25" Margin="346,220,0,0" VerticalAlignment="Top" Width="90
+                " Click="Button_Click" Grid.Column="1">
             <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Red" Offset="0"/>
-                    <GradientStop Color="#7FFFBBBB" Offset="0.99"/>
-                </LinearGradientBrush>
+                <ImageBrush ImageSource="04.jpg"/>
             </Button.Background>
         </Button>
         <ProgressBar x:Name="PBS" HorizontalAlignment="Left" Height="25" Margin="103,220,0,0" Visibility="Collapsed" VerticalAlignment="Top" Width="388"  Grid.ColumnSpan="2"/>
-        <Button Content="Show Japanese" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="88" Height="25" Click="Button_Click_1">
+        <Button Content="Pull" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="90" Height="25" Click="Button_Click_1">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFFFEE00" Offset="0"/>

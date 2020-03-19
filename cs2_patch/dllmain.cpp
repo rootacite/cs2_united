@@ -4,18 +4,31 @@
 #include "BuildIn.h"
 
 #pragma data_seg("PublicData")      // 声明共享数据段，并命名该数据段
+//代表储存数据的进度
 extern "C" DLLAPI double saveProcess = 0.0;
+//共享模块句柄
 HMODULE hMod = NULL;
+//储存原文字符串
 extern "C" DLLAPI wchar_t ms_str[3096] = { 0 };
+//储存GetGlyphoutLine的输出记录
 extern "C" DLLAPI wchar_t ns_str[6192] = { 0 };
-extern "C" DLLAPI int nID = 0;
+//储存译文字符串
+extern "C" DLLAPI wchar_t cn_str[1024] = { 0 };
+//当前的ID
+extern "C" DLLAPI int nID = -1;
+//目标进程PID
 extern "C" DLLAPI DWORD tPid = 0;
+//函数地址
 extern "C" DLLAPI DWORD m_Addr = 0xFFFFFFFF;
+//暴力提取的模式
 extern "C" DLLAPI DWORD VioMode = 0;
-
+//是否成功获取到译文
+extern "C" DLLAPI bool IsSuccess = false;
+//框架备用
 extern "C" DLLAPI bool blockRestoreSrc = false;
 #pragma data_seg()
 #pragma comment(linker, "/section:PublicData,rws")
+
 
 MicroData* Index = NULL;
 MicroBinary* Data = NULL;

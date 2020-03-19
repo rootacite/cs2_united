@@ -27,6 +27,6 @@ struct TESTDATA {
     DWORD Over1;
     QWORD Over2;
 };
-void BuildCV(TESTDATA* pcv, TESTDATA flt, DWORD posinCross, DWORD posInLine, DWORD m_count, WCHAR nchar);
-void ApplyStringToCV(LPCWSTR ws, DWORD pDf, int id);
+extern "C" DLLAPI  void BuildCV(TESTDATA* pcv, TESTDATA flt, DWORD posinCross, DWORD posInLine, DWORD m_count, WCHAR nchar);
+void ApplyStringToCV(LPCWSTR ws, DWORD pDf);
 extern "C" DLLAPI int TranSplete(DWORD lp);
