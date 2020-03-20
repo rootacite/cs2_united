@@ -177,6 +177,10 @@ static bool InitOnce = true;
         }
         else {
             //失败
+            if (nID == -1) {
+                nID = 0;
+                return -1;
+            }
             if (GetDataByID(nID, sjp, scn))
                 nID = GEtLargestID() + 1;
           //  MessageBoxA(0, "1", "", 0);
