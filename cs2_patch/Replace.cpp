@@ -52,9 +52,9 @@ void ApplyStringToCV(LPCWSTR ws, DWORD pDf)
    // return;
    // SetWindowTextW(GetForegroundWindow(),ws);
     TESTDATA loadFirst = *((TESTDATA*)(*(DWORD*)pDf));
-    //if (pNewDf)
-   //     free(pNewDf);
-    pNewDf =(TESTDATA*) malloc(1024*96);
+    if (pNewDf&& pNewDf== (TESTDATA*)*(DWORD*)pDf)
+        free(pNewDf);
+    pNewDf = (TESTDATA*)malloc(1024 * 96);
 
 
 
