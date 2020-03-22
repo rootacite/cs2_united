@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace cs2_chs
 {
@@ -21,24 +23,36 @@ namespace cs2_chs
     /// </summary>
     public partial class Advance : Window
     {
+        public TextView tv = new TextView();
         public bool enChanged = false;
         static public Thread threadRestore;
         static bool enFaileden = false;
+
+        [DllImport("cs2_patch.dll", EntryPoint = "GetResultData")]
+        public static extern uint GetResultData();
+        [DllImport("user32", EntryPoint = "SetWindowLong")]
+        private static extern uint SetWindowLong(IntPtr hwnd, int nIndex, int NewLong);
         static public void TranSpleteProc(ref string itoc)
         {
             string pitoc = itoc;
-          
 
+            bool repeatflag = false;
             if (enFaileden)
             {
                 itoc = "";
                 char lob = '\0';
                 foreach (char t in pitoc)
                 {
-                    if (t != lob)
+                    if (t != lob|| repeatflag)
                     {
                         itoc += t;
                         lob = t;
+
+                        repeatflag = false;
+                    }
+                    else
+                    {
+                        repeatflag = true;
                     }
                 }
             }
@@ -105,6 +119,7 @@ namespace cs2_chs
                         {
                             TRAN_OPT.Text = lobnob;
                             OutPutLog.Text = loacl;
+                        
                         });
                         Thread.Sleep(50);
                     }
@@ -142,6 +157,8 @@ namespace cs2_chs
                 OM_GPY.IsEnabled = true;
                 OM_TOT.IsEnabled = true;
                 OutPutLog.IsEnabled = true;
+                IDnPut.IsEnabled = false;
+                ENREP.IsEnabled = true;
                 MainWindow.EndReplace();
                 MainWindow.thisPfc.SRC_OUTPUT.IsReadOnly = false;
                 unsafe
@@ -154,6 +171,8 @@ namespace cs2_chs
                 OM_GPY.IsEnabled = false;
                 OM_TOT.IsEnabled = false;
                 OutPutLog.IsEnabled = false;
+                IDnPut.IsEnabled = true;
+                ENREP.IsEnabled = false;
                 MainWindow.StartReplace();
                 MainWindow.thisPfc.SRC_OUTPUT.IsReadOnly = true;
                 unsafe
@@ -221,6 +240,34 @@ namespace cs2_chs
         private void REASE_Unchecked(object sender, RoutedEventArgs e)
         {
             enFaileden = false;
+        }
+
+        private void ENREP_Checked(object sender, RoutedEventArgs e)
+        {
+            tv.Show();
+            unsafe
+            {
+                (*(bool*)MainWindow.enReplace) = true;
+                MainWindow.initdata.EnRep = true;
+            }
+        }
+
+        private void ENREP_Unchecked(object sender, RoutedEventArgs e)
+        {
+            tv.Hide();
+            unsafe
+            {
+                (*(bool*)MainWindow.enReplace) = false;
+                MainWindow.initdata.EnRep = false;
+            }
+        }
+
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            unsafe
+            {
+                tv.textbar.Text = new string((char*)GetResultData());
+            }
         }
     }
 }

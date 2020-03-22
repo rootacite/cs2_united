@@ -26,6 +26,10 @@ extern "C" DLLAPI DWORD VioMode = 0;
 extern "C" DLLAPI bool IsSuccess = false;
 //框架备用
 extern "C" DLLAPI bool blockRestoreSrc = false;
+
+extern "C" DLLAPI bool enReplace = false;
+
+extern "C" DLLAPI wchar_t resultstr[1024] = { 0 };
 #pragma data_seg()
 #pragma comment(linker, "/section:PublicData,rws")
 

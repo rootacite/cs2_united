@@ -236,6 +236,7 @@ void CreateDataExport(WCHAR src[],WCHAR data[])
 }
 BOOL CreateDataByID(int ID, LPCWSTR jpBuff, int ljp, LPCWSTR cnBuffer, int lcn)
 {
+   // MessageBoxA(0,"","",0);
     IndexData createData;
     createData.Id = ID;
     createData.JpLength = ljp;
@@ -251,6 +252,9 @@ BOOL CreateDataByID(int ID, LPCWSTR jpBuff, int ljp, LPCWSTR cnBuffer, int lcn)
 }
 BOOL GetDataByJP(int* ID, LPCWSTR jpBuff, LPWSTR cnBuffer)
 {
+    if (Index->Size() == 0) {
+        return 0;
+    }
     IndexData index;
     WCHAR njp[3096];
     WCHAR ncn[3096];
@@ -286,6 +290,9 @@ BOOL GetDataByID(int ID, LPWSTR jpBuff, LPWSTR cnBuffer)
     if (ID == -1) {
         return 0;
     }
+    if (Index->Size() == 0) {
+        return 0;
+    }
     IndexData index;
     (*Index) = ID;
     Index->Get(&index);
@@ -318,6 +325,8 @@ BOOL GetDataByID(int ID, LPWSTR jpBuff, LPWSTR cnBuffer)
 }
 int GEtLargestID()
 {
+    if (Index->Size() == 0)
+        return -1;
     IndexData index;
     int result = 0;
     do {

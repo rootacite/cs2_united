@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Messaging;
+using System.Windows.Interop;
+
 namespace cs2_chs
 {
     /// <summary>
@@ -48,7 +50,7 @@ namespace cs2_chs
         [DllImport("Kernel32.dll", EntryPoint = "WaitForSingleObject")]
         public extern static int WaitForSingleObject(uint hHandle, uint dwMilliseconds);
         [DllImport("cs2_patch.dll", EntryPoint = "InjectSelfTo")]
-        public static extern uint pStart(string path);
+        public static extern uint pStart([MarshalAs(UnmanagedType.LPStr)]  string path);
         [DllImport("cs2_patch.dll", EntryPoint = "CreateDataExport")]
         public static extern void CreateData([MarshalAs(UnmanagedType.LPWStr)] string src,[MarshalAs(UnmanagedType.LPWStr)] string path);
         [DllImport("Kernel32.dll", EntryPoint = "TerminateProcess")]
@@ -57,6 +59,8 @@ namespace cs2_chs
         public static extern uint OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
         [DllImport("Kernel32.dll", EntryPoint = "GetCurrentProcess")]
         public static extern uint GetCurrentProcess();
+        [DllImport("user32", EntryPoint = "SetWindowLong")]
+        private static extern uint SetWindowLong(IntPtr hwnd, int nIndex, int NewLong);
         public static uint pSaveProcess = 0;
         public  static uint hThread = 0;
         public static uint ms_str = 0;
@@ -67,6 +71,7 @@ namespace cs2_chs
         public static uint pblockRestoreSrc;
         public static uint cn_str = 0;
         public static uint IsSuccess = 0;
+        public static uint enReplace = 0;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if(this.Visibility != Visibility.Visible){
@@ -127,12 +132,18 @@ namespace cs2_chs
             AdvanceSetting.EnvioMode.Foreground = new SolidColorBrush(Colors.Black);
 
             pblockRestoreSrc = (uint)DllTools.GetProcAddress(hMod, "blockRestoreSrc");
+            enReplace = (uint)DllTools.GetProcAddress(hMod, "enReplace");
             unsafe
             {
                 (*(bool*)pblockRestoreSrc) = initdata.Envio;
+                (*(bool*)enReplace) = initdata.EnRep;
             }
-          
-          //  MessageBox.Show("");
+
+            AdvanceSetting.ENREP.IsChecked = initdata.EnRep;
+            if (initdata.EnRep)
+            {
+                AdvanceSetting.tv.Show();
+            }
             switch (initdata.VioMode)
             {
                 case 0:
@@ -152,6 +163,8 @@ namespace cs2_chs
                 AdvanceSetting.OM_GPY.IsEnabled = true;
                 AdvanceSetting.OM_TOT.IsEnabled = true;
                 AdvanceSetting.OutPutLog.IsEnabled = true;
+                AdvanceSetting.IDnPut.IsEnabled = false;
+                AdvanceSetting.ENREP.IsEnabled = true;
                 SRC_OUTPUT.IsReadOnly = false;
                 EndReplace();
             }
@@ -160,6 +173,10 @@ namespace cs2_chs
                 AdvanceSetting.OM_GPY.IsEnabled = false;
                 AdvanceSetting.OM_TOT.IsEnabled = false;
                 AdvanceSetting.OutPutLog.IsEnabled = false;
+
+                AdvanceSetting.IDnPut.IsEnabled = true;
+                AdvanceSetting.ENREP.IsEnabled = false;
+
                 StartReplace();
             }
             if (hMod == 0)
@@ -171,6 +188,7 @@ namespace cs2_chs
             nID= (uint)DllTools.GetProcAddress(hMod, "nID");
             cn_str = (uint)DllTools.GetProcAddress(hMod, "cn_str");
             IsSuccess= (uint)DllTools.GetProcAddress(hMod, "IsSuccess");
+
 
             Thread threadExit = new Thread(delegate ()
             {
@@ -297,6 +315,39 @@ namespace cs2_chs
         private void Grid_Unloaded(object sender, RoutedEventArgs e)
         {
         //    MessageBox.Show("");
+        }
+
+        private void Button_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            unsafe
+            {
+                char* pcn_str = (char*)ms_str;
+                string MsStr = new string(pcn_str);
+                TEXT_INPUT.Text = MsStr;
+
+                string BMS = "";
+                foreach (char i in MsStr)
+                    if (i != '\n') BMS += i;
+                Clipboard.SetDataObject(BMS);
+            }
+        }
+
+        private void SRC_OUTPUT_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void TEXT_INPUT_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            string data = Clipboard.GetText();
+            TEXT_INPUT.Text = data;
+
+            e.Handled = true;
+        }
+
+        private void TEXT_INPUT_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

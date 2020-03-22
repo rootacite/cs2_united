@@ -23,3 +23,8 @@ D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.exe
 D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.pdb
 D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.csprojAssemblyReference.cache
 D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\cs2_chs.csproj.CoreCompileInputs.cache
+C:\Users\14980\Desktop\Tran_Tools\aikotoba\cs2_chs.exe.config
+C:\Users\14980\Desktop\Tran_Tools\aikotoba\cs2_chs.exe
+C:\Users\14980\Desktop\Tran_Tools\aikotoba\cs2_chs.pdb
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\TextView.g.cs
+D:\VSProject\cs2\cs2_united\cs2_chs\obj\x86\Release\TextView.baml

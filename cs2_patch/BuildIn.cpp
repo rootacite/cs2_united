@@ -4,7 +4,7 @@
 #include "Replace.h"
 
 /*********声明符号***********/
-
+extern "C" extern DLLAPI wchar_t resultstr[1024];
 extern "C" extern DLLAPI wchar_t ns_str[6192];
 extern HMODULE hMod;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
@@ -27,7 +27,7 @@ bool start_t_flag = false;
 extern char IpfData[16];
 #define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
 
-
+extern "C" extern DLLAPI bool enReplace;
 TESTDATA* pNewDf = NULL;
 PVOID GetProcAddressEx(HANDLE hProc, HMODULE hModule, LPCSTR lpProcName)
 {
@@ -118,9 +118,14 @@ DWORD(WINAPI* pGetGlyphOutlineW)(
     ) = GetGlyphOutlineW;
 BOOL(WINAPI* pTextOutW)(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWSTR lpString, _In_ int c) = TextOutW;
 
+
+
+WCHAR* GetResultData(){
+    return resultstr;
+}
 /*****************************/
 int(*TranSpt)(DWORD);
-HANDLE InjectSelfTo(LPCSTR inptr)
+HANDLE InjectSelfTo(char inptr[])
 {
  //   MessageBoxA(0, inptr,"",0);
     HANDLE currentThread = NULL;
@@ -157,6 +162,8 @@ HANDLE InjectSelfTo(LPCSTR inptr)
     delete info;
     lstrcpyW(ms_str, L" ");
     ns_str[0] = L'\0';
+
+
 
     return  currentThread;
 }
@@ -197,10 +204,36 @@ DWORD WINAPI fGetGlyphOutlineW(
 {
     wstring loca = L"";
     loca += (WCHAR)uChar;
-    if(lstrlenW(ns_str)>=5999)
-        ns_str[0] = L'\0';
+   
     lstrcatW(ns_str, loca.c_str());
-    return pGetGlyphOutlineW(hdc, L' ', fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
+
+    loca = ns_str;
+
+    /********调用数据********/
+    int nSize = GEtLargestID()+1;
+    WCHAR cns[1024];
+    WCHAR jps[1024];
+    for (int i = 0; i < nSize; i++) {
+        if (loca == L"")
+            break;
+        GetDataByID(i, jps, cns);
+
+        if (wcsstr(loca.c_str(), jps)) {
+            ns_str[0] = L'\0';
+      //      MessageBox(0, cns, L"", 0);
+            lstrcpyW(resultstr, cns);
+            break;
+        }
+    }
+
+
+
+    if (lstrlenW(ns_str) >= 1024)
+        ns_str[0] = L'\0';
+    if (enReplace)
+        return pGetGlyphOutlineW(hdc, L' ', fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
+    else
+        return pGetGlyphOutlineW(hdc, uChar, fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
 }
 BOOL  WINAPI fTextOutW(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWSTR lpString, _In_ int c)
 {

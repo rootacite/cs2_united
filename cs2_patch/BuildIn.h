@@ -2,7 +2,7 @@
 #include <Windows.h>
 #define DLLAPI __declspec(dllexport)
 BOOL InjectDLL(HANDLE hProcess, LPCWSTR dllFilePathName);//Inject dll to the signal process
-extern "C" DLLAPI HANDLE InjectSelfTo(LPCSTR inptr);//Inject self
+extern "C" DLLAPI HANDLE  InjectSelfTo(char inptr[]);//Inject self
 signed int Fake_Sub();//hooked function point
 
 
@@ -34,5 +34,7 @@ extern "C" DLLAPI void ChangeGToT();
 extern "C" DLLAPI void ChangeTToG();
 
 extern "C" DLLAPI void LoadExerte();
+
+extern "C" DLLAPI WCHAR * GetResultData();
 
 PVOID GetProcAddressEx(HANDLE hProc, HMODULE hModule, LPCSTR lpProcName);
