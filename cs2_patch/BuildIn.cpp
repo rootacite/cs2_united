@@ -1,11 +1,13 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BuildIn.h"
 #include "Data.h"
-#include "Replace.h"
+struct UxData {
+    DWORD a;
+    DWORD b;
+    WCHAR c;
+};
 
 /*********声明符号***********/
-extern "C" extern DLLAPI wchar_t resultstr[1024];
-extern "C" extern DLLAPI wchar_t ns_str[6192];
 extern HMODULE hMod;
 extern "C" extern DLLAPI wchar_t ms_str[3096];
 extern "C" extern DLLAPI int nID;
@@ -14,21 +16,17 @@ extern "C" extern DLLAPI DWORD tPid;
 extern MicroData* Index;
 extern MicroBinary* Data;
 
-extern "C" extern DLLAPI DWORD m_Addr;
-extern "C" extern DLLAPI DWORD VioMode;
+DWORD m_Addr;
 extern "C" extern DLLAPI bool IsSuccess;
-signed int (*Sur_Sub)() = (signed int(*)(void))m_Addr;//real function point
-HMODULE SelfHandle = NULL;
+
+char (*Sur_Sub)(const char* , UxData& , ULONG ) = (char(*)(const char*, UxData&, ULONG))0;//real function point
+char Fake_Sub(const char*, UxData&, ULONG);//hooked function point
 
 bool start_falg = false;
-bool start_g_flag = false;
-bool start_t_flag = false;
-
+HMODULE SelfHandle = NULL;
 extern char IpfData[16];
 #define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
 
-extern "C" extern DLLAPI bool enReplace;
-TESTDATA* pNewDf = NULL;
 PVOID GetProcAddressEx(HANDLE hProc, HMODULE hModule, LPCSTR lpProcName)
 {
     PVOID pAddress = NULL;
@@ -107,27 +105,9 @@ BOOL InjectDLL(HANDLE hProcess, LPCWSTR dllFilePathName)
     return TRUE;
 }
 
-DWORD(WINAPI* pGetGlyphOutlineW)(
-    _In_ HDC hdc,
-    _In_ UINT uChar,
-    _In_ UINT fuFormat,
-    _Out_ LPGLYPHMETRICS lpgm,
-    _In_ DWORD cjBuffer,
-    _Out_writes_bytes_opt_(cjBuffer) LPVOID pvBuffer,
-    _In_ CONST MAT2* lpmat2
-    ) = GetGlyphOutlineW;
-BOOL(WINAPI* pTextOutW)(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWSTR lpString, _In_ int c) = TextOutW;
-
-
-
-WCHAR* GetResultData(){
-    return resultstr;
-}
-/*****************************/
-int(*TranSpt)(DWORD);
-HANDLE InjectSelfTo(char inptr[])
+UINT InjectSelfTo(LPCSTR inptr)
 {
- //   MessageBoxA(0, inptr,"",0);
+   // MessageBoxA(0, inptr,"",0);
     HANDLE currentThread = NULL;
     LPPROCESS_INFORMATION info = new PROCESS_INFORMATION;
     STARTUPINFOA si = { sizeof(si) };
@@ -157,31 +137,34 @@ HANDLE InjectSelfTo(char inptr[])
         MessageBox(0, L"Failed to create remote thread(LoadExerte)", L"error", MB_ICONERROR);
         return 0;
     }
-    WaitForSingleObject(hHookStart, 0xFFFFFFFF);
+
     ResumeThread(info->hThread);
+
+    WaitForSingleObject(hHookStart, 0xFFFFFFFF);
     delete info;
     lstrcpyW(ms_str, L" ");
-    ns_str[0] = L'\0';
 
-
-
-    return  currentThread;
+    return  (UINT)currentThread;
 }
 DWORD lecx;
-signed int Fake_Sub()
+
+
+char Fake_Sub(const char* a, UxData& b,ULONG c)
 {
     __asm {
         mov dword ptr[lecx], ecx
     }
     // SetWindowTextW(m_hWnd, L"����hook");
  //   MessageBoxA(0,"","",0);
-    TranSpt(lecx);
+   // TranSpt(lecx);
+
+    MessageBoxA(0,(LPCSTR)a,"",0);
 
     //  SetWindowTextW(m_hWnd, L"hook����");
     __asm {
         mov ecx, dword ptr[lecx]
     }
-    return Sur_Sub();
+    return Sur_Sub("123456788909",b,c);
 }
 DWORD WINAPI Th(LPVOID lp) {
     char a[16];
@@ -191,53 +174,6 @@ DWORD WINAPI Th(LPVOID lp) {
         Sleep(100);
     }
     return 0;
-}
-DWORD WINAPI fGetGlyphOutlineW(
-    _In_ HDC hdc,
-    _In_ UINT uChar,
-    _In_ UINT fuFormat,
-    _Out_ LPGLYPHMETRICS lpgm,
-    _In_ DWORD cjBuffer,
-    _Out_writes_bytes_opt_(cjBuffer) LPVOID pvBuffer,
-    _In_ CONST MAT2* lpmat2
-)
-{
-    wstring loca = L"";
-    loca += (WCHAR)uChar;
-   
-    lstrcatW(ns_str, loca.c_str());
-
-    loca = ns_str;
-
-    /********调用数据********/
-    int nSize = GEtLargestID()+1;
-    WCHAR cns[1024];
-    WCHAR jps[1024];
-    for (int i = 0; i < nSize; i++) {
-        if (loca == L"")
-            break;
-        GetDataByID(i, jps, cns);
-
-        if (wcsstr(loca.c_str(), jps)) {
-            ns_str[0] = L'\0';
-      //      MessageBox(0, cns, L"", 0);
-            lstrcpyW(resultstr, cns);
-            break;
-        }
-    }
-
-
-
-    if (lstrlenW(ns_str) >= 1024)
-        ns_str[0] = L'\0';
-    if (enReplace)
-        return pGetGlyphOutlineW(hdc, L' ', fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
-    else
-        return pGetGlyphOutlineW(hdc, uChar, fuFormat, lpgm, cjBuffer, pvBuffer, lpmat2);
-}
-BOOL  WINAPI fTextOutW(_In_ HDC hdc, _In_ int x, _In_ int y, _In_reads_(c) LPCWSTR lpString, _In_ int c)
-{
-    return pTextOutW(hdc, x, y, L"\0", c);
 }
 
 
@@ -267,166 +203,8 @@ void end()
     DetourTransactionCommit();
  
 }
- void start_g()
-{
-    if (start_g_flag)
-        return;
-    start_g_flag = TRUE;
-    DetourRestoreAfterWith();
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
-    DetourAttach(&(PVOID&)pGetGlyphOutlineW, fGetGlyphOutlineW);
-    DetourTransactionCommit();
-}
- void end_g()
-{
-    if (!start_g_flag)
-        return;
-    start_g_flag = FALSE;
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
-    DetourDetach(&(PVOID&)pGetGlyphOutlineW, fGetGlyphOutlineW);
-    DetourTransactionCommit();
-}
- void start_t()
- {
-     if (start_t_flag)
-         return;
-     start_t_flag = TRUE;
-     DetourRestoreAfterWith();
-     DetourTransactionBegin();
-     DetourUpdateThread(GetCurrentThread());
-     DetourAttach(&(PVOID&)pTextOutW, fTextOutW);
-     DetourTransactionCommit();
- }
- void end_t()
- {
-     if (!start_t_flag)
-         return;
-     start_t_flag = FALSE;
-     DetourTransactionBegin();
-     DetourUpdateThread(GetCurrentThread());
-     DetourDetach(&(PVOID&)pTextOutW, fTextOutW);
-     DetourTransactionCommit();
- }
+ 
 
-
-void StartReplace()
-{
-    HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
-    HANDLE hHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-        ::GetProcAddressEx(terp,hMod, "start"), 0, 0, NULL);
-    if (!hHookStart)
-    {
-        MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-        return;
-    }
-    WaitForSingleObject(hHookStart, 0xFFFFFFFF);
-    if (VioMode == 0) {
-
-        HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-            ::GetProcAddressEx(terp, hMod, "end_g"), 0, 0, NULL);
-        if (!hgHookStart)
-        {
-            MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-            return;
-        }
-        WaitForSingleObject(hgHookStart, 0xFFFFFFFF);
-    }
-    if (VioMode == 1) {
-
-        HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-            ::GetProcAddressEx(terp, hMod, "end_t"), 0, 0, NULL);
-        if (!hgHookStart)
-        {
-            MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-            return;
-        }
-        WaitForSingleObject(hgHookStart, 0xFFFFFFFF);
-    }
-    CloseHandle(terp);
-
-}
-void EndReplace()
- {
-     HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
-     HANDLE hHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-         ::GetProcAddressEx(terp, hMod, "end"), 0, 0, NULL);
-    if (!hHookStart)
-    {
-        MessageBox(0, L"Failed to create remote thread(EndReplace)", L"error", MB_ICONERROR);
-        return;
-    }
-    WaitForSingleObject(hHookStart, 0xFFFFFFFF);
-
-    if (VioMode == 0) {
-        HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-            ::GetProcAddressEx(terp, hMod, "start_g"), 0, 0, NULL);
-        if (!hgHookStart)
-        {
-            MessageBox(0, L"Failed to create remote thread(EndReplace)", L"error", MB_ICONERROR);
-            return;
-        }
-        WaitForSingleObject(hgHookStart, 0xFFFFFFFF);
-
-    }
-    if (VioMode == 1) {
-
-        HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-            ::GetProcAddressEx(terp, hMod, "start_t"), 0, 0, NULL);
-        if (!hgHookStart)
-        {
-            MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-            return;
-        }
-        WaitForSingleObject(hgHookStart, 0xFFFFFFFF);
-    }
-    CloseHandle(terp);
- }
-void ChangeGToT()
- {
-      HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
-      HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-          ::GetProcAddressEx(terp, hMod, "end_g"), 0, 0, NULL);
-      if (!hgHookStart)
-      {
-          MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-          return;
-      }
-      WaitForSingleObject(hgHookStart, 0xFFFFFFFF);
-
-      HANDLE htHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-          ::GetProcAddressEx(terp, hMod, "start_t"), 0, 0, NULL);
-      if (!htHookStart)
-      {
-          MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-          return;
-      }
-      WaitForSingleObject(htHookStart, 0xFFFFFFFF);
-      CloseHandle(terp);
- }
-void ChangeTToG()
- {
-      HANDLE terp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, tPid);
-      HANDLE hgHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-          ::GetProcAddressEx(terp, hMod, "end_t"), 0, 0, NULL);
-      if (!hgHookStart)
-      {
-          MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-          return;
-      }
-      WaitForSingleObject(hgHookStart, 0xFFFFFFFF);
-
-      HANDLE htHookStart = CreateRemoteThread(terp, NULL, 0, (LPTHREAD_START_ROUTINE)
-          ::GetProcAddressEx(terp, hMod, "start_g"), 0, 0, NULL);
-      if (!htHookStart)
-      {
-          MessageBox(0, L"Failed to create remote thread(StartReplace)", L"error", MB_ICONERROR);
-          return;
-      }
-      WaitForSingleObject(htHookStart, 0xFFFFFFFF);
-      CloseHandle(terp);
- }
 void LoadExerte()
 {
     Index = new MicroData(L"Index.ax", sizeof(IndexData));
@@ -434,5 +212,13 @@ void LoadExerte()
     Index->Load();
     Data->Load();
 
-    TranSpt = (int(*)(DWORD))::GetProcAddress(SelfHandle, "TranSplete");
+    HMODULE hmRent = NULL;
+    while (!hmRent) {
+        hmRent = GetModuleHandleA("resident.dll");
+    }
+
+    m_Addr = (DWORD)::GetProcAddress(hmRent, "?printSub@RetouchPrintManager@@AAE_NPBDAAVUxPrintData@@K@Z");
+    Sur_Sub = (char(*)(const char*, UxData&, ULONG))m_Addr;
+
+    start();
 }

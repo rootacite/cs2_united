@@ -6,201 +6,112 @@ extern "C" extern DLLAPI double saveProcess;
 extern HMODULE hMod;
 
 extern "C" extern DLLAPI wchar_t ms_str[3096];
-extern "C" extern DLLAPI wchar_t cn_str[1024];
+
 extern "C" extern DLLAPI int nID;
 extern "C" extern DLLAPI DWORD tPid;
-extern "C" extern DLLAPI bool blockRestoreSrc;
+
 struct ExportParam {
     WCHAR data[1024];
     WCHAR src[1024];
 };
-DWORD CreateDataExportEx(LPVOID data) 
+DWORD CreateDataExportEx(LPVOID data)
 {
-  
+
     ExportParam* bData = (ExportParam*)data;
-    if (!blockRestoreSrc) {
-        // MessageBoxW(0, data,L"",0);
-        WCHAR sjp[1024];
-        WCHAR scn[1024];
-        int lasger = GEtLargestID();
-        if (nID == -1) {
-            MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
-            saveProcess = 1.0;
-            return 1;
-        }
-        if (nID - lasger > 1) {
-            MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
-            saveProcess = 1.0;
-            return 1;
-        }
-        if (!GetDataByID(nID, sjp, scn)) {
+    WCHAR sjp[1024];
+    WCHAR scn[1024];
+    int lasger = GEtLargestID();
+    if (nID == -1) {
+        MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
+        saveProcess = 1.0;
+        return 1;
+    }
+    if (nID - lasger > 1) {
+        MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
+        saveProcess = 1.0;
+        return 1;
+    }
+    if (!GetDataByID(nID, sjp, scn)) {
 
-            CreateDataByID(nID, bData->src, 2 * (lstrlenW(bData->src) + 1), bData->data, 2 * (lstrlenW(bData->data) + 1));
-            WCHAR abv[16];
-            _itow_s(nID, abv, 10);
-            wstring str;
-            str += L"Apply ID:";
-            str += abv;
-            str += L"\n";
-            str += bData->src;
-            str += L"->";
-            str += bData->data;
-          //  MessageBoxW(NULL, str.c_str(), L"successed to add rule", MB_ICONINFORMATION | MB_MODEMASK);
-            saveProcess = 1.0;
-            return 1;
-        }
-        else {
-            wstring nString = L"This rule is already exist,do you want still to replace it?(according to your PC,it may take you a short time)\n";
-            WCHAR abv[16];
-            _itow_s(nID, abv, 10);
-            nString += L"ID:";
-            nString += abv;
-            nString += L"\n";
-            nString += sjp;
-            saveProcess = 0.0;
-            int result = MessageBoxW(NULL, nString.c_str(), L"information", MB_ICONINFORMATION | MB_OKCANCEL | MB_MODEMASK);
-            if (result != IDOK) {
-                saveProcess = 1.0;
-                return 1;
-            }
-            int p = 0;
-            MicroData* _Index = new MicroData(L"~Index.ax", sizeof(IndexData));
-            MicroBinary* _Data = new MicroBinary(L"~Data.ax");
-            IndexData createData;
-            while (GetDataByID(p, sjp, scn)) {
-                if (p == nID) {
-                    createData.Id = p;
-                    createData.JpLength = 2 * (lstrlenW(sjp) + 1);
-                    createData.CnLength = 2 * (lstrlenW(bData->data) + 1);
-                    createData.JpBass = _Data->Size();
-                    _Data->Push(sjp, 2 * (lstrlenW(sjp) + 1));
-                    createData.CnBass = _Data->Size();
-                    _Data->Push(bData->data, 2 * (lstrlenW(bData->data) + 1));
-                    _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
-                }
-                else
-                {
-                    createData.Id = p;
-                    createData.JpLength = 2 * (lstrlenW(sjp) + 1);
-                    createData.CnLength = 2 * (lstrlenW(scn) + 1);
-                    createData.JpBass = _Data->Size();
-                    _Data->Push(sjp, 2 * (lstrlenW(sjp) + 1));
-                    createData.CnBass = _Data->Size();
-                    _Data->Push(scn, 2 * (lstrlenW(scn) + 1));
-                    _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
-                }
-                saveProcess = (double)p / (double)(lasger);
-                p++;
-            }
-
-            delete _Index;
-            delete _Data;
-            delete Index;
-            delete ::Data;
-            //   saveProcess = 0.0;
-            saveProcess = 1;
-            DeleteFile(L"Data.ax");
-            DeleteFile(L"Index.ax");
-            rename("~Data.ax", "Data.ax");
-            rename("~Index.ax", "Index.ax");
-            Index = new MicroData(L"Index.ax", sizeof(IndexData));
-            ::Data = new MicroBinary(L"Data.ax");
-            Index->Load();
-            ::Data->Load();
-            return 1;
-        }
+        CreateDataByID(nID, bData->src, 2 * (lstrlenW(bData->src) + 1), bData->data, 2 * (lstrlenW(bData->data) + 1));
+        WCHAR abv[16];
+        _itow_s(nID, abv, 10);
+        wstring str;
+        str += L"Apply ID:";
+        str += abv;
+        str += L"\n";
+        str += bData->src;
+        str += L"->";
+        str += bData->data;
+        //  MessageBoxW(NULL, str.c_str(), L"successed to add rule", MB_ICONINFORMATION | MB_MODEMASK);
+        saveProcess = 1.0;
+        return 1;
     }
     else {
-        WCHAR sjp[3096];
-        WCHAR scn[3096];
-        int lasger = GEtLargestID();
-        int jkID;
-
-        if (!GetDataByJP(&jkID, bData->src, scn)) {
-            CreateDataByID(lasger + 1, bData->src, 2 * (lstrlenW(bData->src) + 1), bData->data, 2 * (lstrlenW(bData->data) + 1));
-            WCHAR abv[16];
-            _itow_s(lasger + 1, abv, 10);
-            wstring str;
-            str += L"Apply ID:";
-            str += abv;
-            str += L"\n";
-            str += bData->src;
-            str += L"->";
-            str += bData->data;
-            MessageBoxW(NULL, str.c_str(), L"successed to add rule", MB_ICONINFORMATION | MB_MODEMASK);
+        wstring nString = L"This rule is already exist,do you want still to replace it?(according to your PC,it may take you a short time)\n";
+        WCHAR abv[16];
+        _itow_s(nID, abv, 10);
+        nString += L"ID:";
+        nString += abv;
+        nString += L"\n";
+        nString += sjp;
+        saveProcess = 0.0;
+        int result = MessageBoxW(NULL, nString.c_str(), L"information", MB_ICONINFORMATION | MB_OKCANCEL | MB_MODEMASK);
+        if (result != IDOK) {
             saveProcess = 1.0;
             return 1;
         }
-        else {
-            wstring nString = L"This rule is already exist,do you want still to replace it?(according to your PC,it may take you a short time)\n";
-            WCHAR abv[16];
-            _itow_s(jkID, abv, 10);
-            nString += L"ID:";
-            nString += abv;
-            nString += L"\n";
-            nString += bData->src;
-
-            int result = MessageBoxW(NULL, nString.c_str(), L"information", MB_ICONINFORMATION | MB_OKCANCEL | MB_MODEMASK);
-            if (result != IDOK) {
-                saveProcess = 1.0;
-                return 1;
+        int p = 0;
+        MicroData* _Index = new MicroData(L"~Index.ax", sizeof(IndexData));
+        MicroBinary* _Data = new MicroBinary(L"~Data.ax");
+        IndexData createData;
+        while (GetDataByID(p, sjp, scn)) {
+            if (p == nID) {
+                createData.Id = p;
+                createData.JpLength = 2 * (lstrlenW(sjp) + 1);
+                createData.CnLength = 2 * (lstrlenW(bData->data) + 1);
+                createData.JpBass = _Data->Size();
+                _Data->Push(sjp, 2 * (lstrlenW(sjp) + 1));
+                createData.CnBass = _Data->Size();
+                _Data->Push(bData->data, 2 * (lstrlenW(bData->data) + 1));
+                _Index->Push(&createData);
+                _Index->Save();
+                _Data->Save();
             }
-
-            int p = 0;
-            MicroData* _Index = new MicroData(L"~Index.ax", sizeof(IndexData));
-            MicroBinary* _Data = new MicroBinary(L"~Data.ax");
-            IndexData createData;
-            while (GetDataByID(p, sjp, scn)) {
-                if (p == jkID) {
-                    createData.Id = p;
-                    createData.JpLength = 2 * (lstrlenW(sjp) + 1);
-                    createData.CnLength = 2 * (lstrlenW(bData->data) + 1);
-                    createData.JpBass = _Data->Size();
-                    _Data->Push(sjp, 2 * (lstrlenW(sjp) + 1));
-                    createData.CnBass = _Data->Size();
-                    _Data->Push(bData->data, 2 * (lstrlenW(bData->data) + 1));
-                    _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
-                }
-                else
-                {
-                    createData.Id = p;
-                    createData.JpLength = 2 * (lstrlenW(sjp) + 1);
-                    createData.CnLength = 2 * (lstrlenW(scn) + 1);
-                    createData.JpBass = _Data->Size();
-                    _Data->Push(sjp, 2 * (lstrlenW(sjp) + 1));
-                    createData.CnBass = _Data->Size();
-                    _Data->Push(scn, 2 * (lstrlenW(scn) + 1));
-                    _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
-                }
-                saveProcess = (double)p / (double)(lasger);
-                p++;
+            else
+            {
+                createData.Id = p;
+                createData.JpLength = 2 * (lstrlenW(sjp) + 1);
+                createData.CnLength = 2 * (lstrlenW(scn) + 1);
+                createData.JpBass = _Data->Size();
+                _Data->Push(sjp, 2 * (lstrlenW(sjp) + 1));
+                createData.CnBass = _Data->Size();
+                _Data->Push(scn, 2 * (lstrlenW(scn) + 1));
+                _Index->Push(&createData);
+                _Index->Save();
+                _Data->Save();
             }
-
-            delete _Index;
-            delete _Data;
-            delete Index;
-            delete ::Data;
-            //   saveProcess = 0.0;
-            saveProcess = 1;
-            DeleteFile(L"Data.ax");
-            DeleteFile(L"Index.ax");
-            rename("~Data.ax", "Data.ax");
-            rename("~Index.ax", "Index.ax");
-            Index = new MicroData(L"Index.ax", sizeof(IndexData));
-            ::Data = new MicroBinary(L"Data.ax");
-            Index->Load();
-            ::Data->Load();
-            return 1;
+            saveProcess = (double)p / (double)(lasger);
+            p++;
         }
+
+        delete _Index;
+        delete _Data;
+        delete Index;
+        delete ::Data;
+        //   saveProcess = 0.0;
+        saveProcess = 1;
+        DeleteFile(L"Data.ax");
+        DeleteFile(L"Index.ax");
+        rename("~Data.ax", "Data.ax");
+        rename("~Index.ax", "Index.ax");
+        Index = new MicroData(L"Index.ax", sizeof(IndexData));
+        ::Data = new MicroBinary(L"Data.ax");
+        Index->Load();
+        ::Data->Load();
+        return 1;
     }
+
 }
 void CreateDataExport(WCHAR src[],WCHAR data[])
 {

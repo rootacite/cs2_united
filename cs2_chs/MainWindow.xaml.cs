@@ -27,21 +27,9 @@ namespace cs2_chs
     public partial class MainWindow : Window
     {
         //TestA
-        public static InitData initdata = new InitData();//加载初始化信息
-        public Advance AdvanceSetting = new Advance();//加载高级设置窗口
         public static MainWindow thisPfc;
 
-        [DllImport("cs2_patch.dll", EntryPoint = "ChangeGToT")]
-        public static extern void ChangeGToT();
-        [DllImport("cs2_patch.dll", EntryPoint = "ChangeTToG")]
-        public static extern void ChangeTToG();
-
-        [DllImport("cs2_patch.dll", EntryPoint = "TestA")]
-        public static extern void TestA();
-        [DllImport("cs2_patch.dll", EntryPoint = "StartReplace")]
-        public static extern void StartReplace();
-        [DllImport("cs2_patch.dll", EntryPoint = "EndReplace")]
-        public static extern void EndReplace();
+      
         [DllImport("Kernel32.dll", EntryPoint = "WaitOnAddress")]
         public extern static bool WaitOnAddress(uint Address, uint CompareAddress, uint AddressSize, uint dwMilliseconds);
         [DllImport("Kernel32.dll", EntryPoint = "WakeByAddressSingle")]
@@ -49,8 +37,10 @@ namespace cs2_chs
 
         [DllImport("Kernel32.dll", EntryPoint = "WaitForSingleObject")]
         public extern static int WaitForSingleObject(uint hHandle, uint dwMilliseconds);
+
         [DllImport("cs2_patch.dll", EntryPoint = "InjectSelfTo")]
-        public static extern uint pStart([MarshalAs(UnmanagedType.LPStr)]  string path);
+        public static extern uint InjectSelfTo(string path);
+
         [DllImport("cs2_patch.dll", EntryPoint = "CreateDataExport")]
         public static extern void CreateData([MarshalAs(UnmanagedType.LPWStr)] string src,[MarshalAs(UnmanagedType.LPWStr)] string path);
         [DllImport("Kernel32.dll", EntryPoint = "TerminateProcess")]
@@ -64,14 +54,11 @@ namespace cs2_chs
         public static uint pSaveProcess = 0;
         public  static uint hThread = 0;
         public static uint ms_str = 0;
-        public static uint ns_str = 0;
         public static uint ptPid = 0;
         public  static uint ppMode;
         public static uint nID;
-        public static uint pblockRestoreSrc;
         public static uint cn_str = 0;
         public static uint IsSuccess = 0;
-        public static uint enReplace = 0;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if(this.Visibility != Visibility.Visible){
@@ -105,85 +92,22 @@ namespace cs2_chs
         }
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+      //      MessageBox.Show("");
             // char[] a = { '1', '2', '3' };
-           // MessageBox.Show("");
-            TestA();
-            int hMod = DllTools.GetModuleHandleA("cs2_patch.dll");
+         //   MessageBox.Show("");
+      
+        
             thisPfc = this;
-            if (!initdata.successedLoad)
-            {
-                MessageBox.Show("error:failed to load Init.xml!","Error!",MessageBoxButton.OK,MessageBoxImage.Error);
-                TerminateProcess(GetCurrentProcess(), 1);
-                return;
-            }
-            uint ppAddr = (uint)DllTools.GetProcAddress(hMod, "m_Addr");//m_Addr
-            MainWindow.ppMode = (uint)DllTools.GetProcAddress(hMod, "VioMode");//m_Addr
-            unsafe
-            {
-                (*(uint*)ppAddr) = initdata.Addr;
-                (*(int*)ppMode) = initdata.VioMode;
-            }
 
-            AdvanceSetting.StartUpEdit.Text = initdata.StartUp;
-            AdvanceSetting.StartUpEdit.Foreground = new SolidColorBrush(Colors.Black);
-            AdvanceSetting.AddressEdit.Text = Convert.ToString(initdata.Addr, 16);
-            AdvanceSetting.AddressEdit.Foreground = new SolidColorBrush(Colors.Black);
-            AdvanceSetting.EnvioMode.IsChecked = initdata.Envio;
-            AdvanceSetting.EnvioMode.Foreground = new SolidColorBrush(Colors.Black);
-
-            pblockRestoreSrc = (uint)DllTools.GetProcAddress(hMod, "blockRestoreSrc");
-            enReplace = (uint)DllTools.GetProcAddress(hMod, "enReplace");
-            unsafe
-            {
-                (*(bool*)pblockRestoreSrc) = initdata.Envio;
-                (*(bool*)enReplace) = initdata.EnRep;
-            }
-
-            AdvanceSetting.ENREP.IsChecked = initdata.EnRep;
-            if (initdata.EnRep)
-            {
-                AdvanceSetting.tv.Show();
-            }
-            switch (initdata.VioMode)
-            {
-                case 0:
-                    AdvanceSetting.OM_GPY.IsChecked = true;
-                    break;
-                case 1:
-                    AdvanceSetting.OM_TOT.IsChecked = true;
-                    break;
-            }
-           // MessageBox.Show("");
-            AdvanceSetting.enChanged = false;
-
-           // MessageBox.Show(initdata.StartUp);
-            hThread = pStart(initdata.StartUp);//VioMode
-            if (initdata.Envio)
-            {
-                AdvanceSetting.OM_GPY.IsEnabled = true;
-                AdvanceSetting.OM_TOT.IsEnabled = true;
-                AdvanceSetting.OutPutLog.IsEnabled = true;
-                AdvanceSetting.IDnPut.IsEnabled = false;
-                AdvanceSetting.ENREP.IsEnabled = true;
-                SRC_OUTPUT.IsReadOnly = false;
-                EndReplace();
-            }
-            else
-            {
-                AdvanceSetting.OM_GPY.IsEnabled = false;
-                AdvanceSetting.OM_TOT.IsEnabled = false;
-                AdvanceSetting.OutPutLog.IsEnabled = false;
-
-                AdvanceSetting.IDnPut.IsEnabled = true;
-                AdvanceSetting.ENREP.IsEnabled = false;
-
-                StartReplace();
-            }
+      //      MessageBox.Show("zero");
+            hThread = InjectSelfTo("ExHIBIT.exe");//VioMode
+            int hMod = DllTools.GetModuleHandleA("cs2_patch.dll");
+        //    MessageBox.Show("");
             if (hMod == 0)
                 MessageBox.Show("error");
+         //   MessageBox.Show("");
             pSaveProcess = (uint)DllTools.GetProcAddress(hMod, "saveProcess");
             ms_str = (uint)DllTools.GetProcAddress(hMod, "ms_str");
-            ns_str = (uint)DllTools.GetProcAddress(hMod, "ns_str");
             ptPid = (uint)DllTools.GetProcAddress(hMod, "tPid");
             nID= (uint)DllTools.GetProcAddress(hMod, "nID");
             cn_str = (uint)DllTools.GetProcAddress(hMod, "cn_str");
@@ -207,13 +131,6 @@ namespace cs2_chs
                   
                     unsafe
                     {
-                        while (*(bool*)pblockRestoreSrc)
-                        {
-                            // bool aloc = true;
-                            //MessageBox.Show("");
-                            //WaitOnAddress(pblockRestoreSrc, (uint)&aloc, sizeof(bool), 0xFFFFFFFF);
-                            Thread.Sleep(10);
-                        }
                        
                         char* pms_str = (char*)ms_str;
                         string MsStr = new string(pms_str);
@@ -236,7 +153,6 @@ namespace cs2_chs
             });
             thread3.Start();
            // MessageBox.Show("");
-           Advance.threadRestore.Start();
         }
         
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -257,10 +173,7 @@ namespace cs2_chs
                     LocalS = TEXT_INPUT.Text;
                     LocalP = SRC_OUTPUT.Text;
                 });
-                if (initdata.Envio)
-                {
-                    Advance.UnTranSpleteProc(ref LocalP);
-                }
+
                 CreateData(LocalP, LocalS);
             });
 
@@ -310,7 +223,7 @@ namespace cs2_chs
         }
         private void CommandBinding_ShowMainWindow_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            AdvanceSetting.Show();
+            
         }
         private void Grid_Unloaded(object sender, RoutedEventArgs e)
         {

@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>C:\Users\14980\Desktop\Tran_Tools\aikotoba</OutDir>
+    <OutDir>..\Release</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -159,7 +159,6 @@
     <ClInclude Include="Data.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Replace.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BuildIn.cpp" />
@@ -171,7 +170,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Replace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MicroFile.dll" />
