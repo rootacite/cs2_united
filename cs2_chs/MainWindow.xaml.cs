@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Messaging;
 using System.Windows.Interop;
+using System.Activities;
 
 namespace cs2_chs
 {
@@ -49,8 +50,12 @@ namespace cs2_chs
 
         [DllImport("Kernel32.dll", EntryPoint = "WaitForSingleObject")]
         public extern static int WaitForSingleObject(uint hHandle, uint dwMilliseconds);
+
+
         [DllImport("cs2_patch.dll", EntryPoint = "InjectSelfTo")]
         public static extern uint pStart([MarshalAs(UnmanagedType.LPStr)]  string path);
+
+
         [DllImport("cs2_patch.dll", EntryPoint = "CreateDataExport")]
         public static extern void CreateData([MarshalAs(UnmanagedType.LPWStr)] string src,[MarshalAs(UnmanagedType.LPWStr)] string path);
         [DllImport("Kernel32.dll", EntryPoint = "TerminateProcess")]

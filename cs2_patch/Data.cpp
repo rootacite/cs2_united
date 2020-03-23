@@ -14,7 +14,7 @@ struct ExportParam {
     WCHAR data[1024];
     WCHAR src[1024];
 };
-DWORD CreateDataExportEx(LPVOID data) 
+int CreateDataExportEx(LPVOID data) 
 {
   
     ExportParam* bData = (ExportParam*)data;
@@ -26,12 +26,12 @@ DWORD CreateDataExportEx(LPVOID data)
         if (nID == -1) {
             MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
             saveProcess = 1.0;
-            return 1;
+            return -1;
         }
         if (nID - lasger > 1) {
             MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
             saveProcess = 1.0;
-            return 1;
+            return -1;
         }
         if (!GetDataByID(nID, sjp, scn)) {
 
@@ -77,8 +77,7 @@ DWORD CreateDataExportEx(LPVOID data)
                     createData.CnBass = _Data->Size();
                     _Data->Push(bData->data, 2 * (lstrlenW(bData->data) + 1));
                     _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
+                   
                 }
                 else
                 {
@@ -90,13 +89,13 @@ DWORD CreateDataExportEx(LPVOID data)
                     createData.CnBass = _Data->Size();
                     _Data->Push(scn, 2 * (lstrlenW(scn) + 1));
                     _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
+                   
                 }
                 saveProcess = (double)p / (double)(lasger);
                 p++;
             }
-
+            _Index->Save();
+            _Data->Save();
             delete _Index;
             delete _Data;
             delete Index;
@@ -115,8 +114,8 @@ DWORD CreateDataExportEx(LPVOID data)
         }
     }
     else {
-        WCHAR sjp[3096];
-        WCHAR scn[3096];
+        WCHAR sjp[1024];
+        WCHAR scn[1024];
         int lasger = GEtLargestID();
         int jkID;
 
@@ -164,8 +163,7 @@ DWORD CreateDataExportEx(LPVOID data)
                     createData.CnBass = _Data->Size();
                     _Data->Push(bData->data, 2 * (lstrlenW(bData->data) + 1));
                     _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
+                   
                 }
                 else
                 {
@@ -177,13 +175,13 @@ DWORD CreateDataExportEx(LPVOID data)
                     createData.CnBass = _Data->Size();
                     _Data->Push(scn, 2 * (lstrlenW(scn) + 1));
                     _Index->Push(&createData);
-                    _Index->Save();
-                    _Data->Save();
+                    
                 }
                 saveProcess = (double)p / (double)(lasger);
                 p++;
             }
-
+            _Index->Save();
+            _Data->Save();
             delete _Index;
             delete _Data;
             delete Index;

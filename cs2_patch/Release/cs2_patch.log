@@ -1,10 +1,10 @@
 ﻿D:\Visual Studio\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(453,5): warning MSB8004: Output 目录未以斜杠结尾。  此生成实例将添加斜杠，因为必须有这个斜杠才能正确计算 Output 目录。
-  BuildIn.cpp
-  dllmain.cpp
+  Replace.cpp
+D:\VSProject\cs2\cs2_united\cs2_patch\Replace.cpp(74,23): warning C4018: “<”: 有符号/无符号不匹配
     正在创建库 C:\Users\14980\Desktop\Tran_Tools\aikotoba\cs2_patch.lib 和对象 C:\Users\14980\Desktop\Tran_Tools\aikotoba\cs2_patch.exp
   正在生成代码
-  4 of 169 functions ( 2.4%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
+  2 of 169 functions ( 1.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   cs2_patch.vcxproj -> C:\Users\14980\Desktop\Tran_Tools\aikotoba\cs2_patch.dll

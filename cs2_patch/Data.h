@@ -6,4 +6,4 @@ BOOL CreateDataByID(int ID, LPCWSTR jpBuff, int ljp, LPCWSTR cnBuffer, int lcn);
 BOOL GetDataByJP(int* ID, LPCWSTR jpBuff, LPWSTR cnBuffer);
 BOOL GetDataByID(int ID, LPWSTR jpBuff, LPWSTR cnBuffer);
 int GEtLargestID();
-extern "C" DLLAPI DWORD CreateDataExportEx(LPVOID path);
+extern "C" DLLAPI int CreateDataExportEx(LPVOID path);

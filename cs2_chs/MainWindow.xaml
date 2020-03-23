@@ -23,7 +23,8 @@
                 </LinearGradientBrush>
             </TextBox.Background>
         </TextBox>
-        <Button x:Name="apply"  Content="Apply" HorizontalAlignment="Left" Height="25" Margin="349.2,220,0,0" VerticalAlignment="Top" Width="90
+        <Button x:Name="apply"  Content="Commit
+" HorizontalAlignment="Left" Height="25" Margin="349.2,220,0,0" VerticalAlignment="Top" Width="90
                 " Click="Button_Click" Grid.Column="1">
             <Button.Background>
                 <ImageBrush ImageSource="04.jpg"/>
