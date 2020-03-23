@@ -1,5 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Init>
   <StartUp>cs2.exe</StartUp>
-  <Addr>5FC1C0</Addr>
+  <Addr>5fc1c0</Addr>
+  <vio>false</vio>
+  <viom>0</viom>
+  <rep>false</rep>
+  <x>752</x>
+  <y>230</y>
+  <w>743</w>
+  <h>88</h>
 </Init>
