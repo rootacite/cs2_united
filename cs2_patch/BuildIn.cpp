@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "BuildIn.h"
 #include "Data.h"
+
+#include <atlconv.h>
 struct UxData {
     DWORD a;
     DWORD b;
@@ -19,8 +21,24 @@ extern MicroBinary* Data;
 DWORD m_Addr;
 extern "C" extern DLLAPI bool IsSuccess;
 
-char (*Sur_Sub)(const char* , UxData& , ULONG ) = (char(*)(const char*, UxData&, ULONG))0;//real function point
-char Fake_Sub(const char*, UxData&, ULONG);//hooked function point
+char (__stdcall*Sur_Sub)(const char* , UxData& , ULONG ) = (char(__stdcall*)(const char*, UxData&, ULONG))0;//real function point
+extern "C" char __stdcall Fake_Sub(const char*, UxData&, ULONG);//hooked function point
+
+HFONT(WINAPI*pCreateFontIndirectA)(CONST LOGFONTA* lplf)= CreateFontIndirectA;
+HFONT   WINAPI fCreateFontIndirectA(CONST LOGFONTA* lplf) 
+{
+    if (lplf->lfCharSet == GB2312_CHARSET)
+        return pCreateFontIndirectA(lplf);
+
+    LOGFONTA* pNClplf = (LOGFONTA*)lplf;
+    DWORD oldProtect;
+    VirtualProtect(pNClplf, sizeof(LOGFONTA), PAGE_READWRITE, &oldProtect);
+    pNClplf->lfCharSet = GB2312_CHARSET;
+    VirtualProtect(pNClplf, sizeof(LOGFONTA), oldProtect, NULL);
+
+    return pCreateFontIndirectA(lplf);
+};
+
 
 bool start_falg = false;
 HMODULE SelfHandle = NULL;
@@ -149,22 +167,109 @@ UINT InjectSelfTo(LPCSTR inptr)
 DWORD lecx;
 
 
-char Fake_Sub(const char* a, UxData& b,ULONG c)
+extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
+    USES_CONVERSION;
+   
+    WCHAR testTran[1024];
+    int size = MultiByteToWideChar(932, 0, nStr, -1, testTran, 0);
+    MultiByteToWideChar(932, 0, nStr, -1, testTran, size);
+
+   //  MessageBoxW(0, testTran, L"", 0);
+    lstrcpyW(ms_str, testTran);
+
+
+        char buffer[1024];
+        WCHAR sjp[1024];
+        WCHAR scn[1024];
+
+        int ppdid = nID + 1;
+
+        if (!GetDataByID(ppdid, sjp, scn)) {//尝试获取当前ID的数据
+            //如果失败
+            int pID = 0;
+            if (GetDataByJP(&pID, testTran, scn)) {//尝试从原文获取翻译
+                //成功
+                nID = pID;
+               
+               
+                int nsize = WideCharToMultiByte(936, 0, scn, -1, buffer, 0, NULL, FALSE);
+                WideCharToMultiByte(936, 0, scn, -1, buffer, nsize, NULL, FALSE);
+                MessageBoxA(0, buffer, "cna", 0);
+                return "我草泥马";//直接返回
+            }
+            else {
+                //失败
+                if (nID == -1) {
+                    nID = 0;
+                    int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
+                   
+                    return nStr;
+                }
+                if (GetDataByID(nID, sjp, scn))
+                    nID = GEtLargestID() + 1;
+                int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
+               
+                    return nStr;
+            }
+        }
+        else
+        {
+            //如果成功
+            if (lstrcmpW(sjp, testTran) == 0) {//检查是否是正确的翻译
+                //如果是则直接应用
+                nID = ppdid;
+
+              
+                int nsize = WideCharToMultiByte(936, 0, scn, -1, buffer, 0, NULL, FALSE);
+                WideCharToMultiByte(936, 0, scn, -1, buffer, nsize, NULL, FALSE);
+                MessageBoxA(0, buffer, "cna", 0);
+
+                return "我草泥马";
+            }
+            else
+            {
+                //如果不是则
+                int pID = 0;
+                if (GetDataByJP(&pID, testTran, scn)) {//再次尝试用原文获取数据
+                    //如果成功
+                    nID = pID;
+                 
+                 
+                    
+                    int nsize = WideCharToMultiByte(936, 0, scn, -1, buffer, 0, NULL, FALSE);
+                    WideCharToMultiByte(936, 0, scn, -1, buffer, nsize, NULL, FALSE);
+
+                    MessageBoxA(0, buffer, "cna", 0);
+                    return "我草泥马";//直接返回
+                }
+                else {
+                    //如果不是
+                    nID = GEtLargestID() + 1;
+                    //   MessageBoxA(0, "4", "", 0);
+                    int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
+                    
+                    return nStr;
+                }
+
+            }
+        }
+    return NULL;
+}
+
+LPCSTR(*pTpan)(LPCSTR);
+
+extern "C" char __stdcall Fake_Sub(const char* a, UxData& b,ULONG c)
 {
     __asm {
-        mov dword ptr[lecx], ecx
+        push ecx
     }
-    // SetWindowTextW(m_hWnd, L"����hook");
- //   MessageBoxA(0,"","",0);
-   // TranSpt(lecx);
 
-    MessageBoxA(0,(LPCSTR)a,"",0);
-
-    //  SetWindowTextW(m_hWnd, L"hook����");
+  //  LPCSTR nStrnp = ((string(*)(string))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete"))(a).c_str();
+    LPCSTR bc = pTpan(a);
     __asm {
-        mov ecx, dword ptr[lecx]
+     pop ecx
     }
-    return Sur_Sub("123456788909",b,c);
+    return Sur_Sub(bc, b, c);
 }
 DWORD WINAPI Th(LPVOID lp) {
     char a[16];
@@ -186,6 +291,7 @@ void start()
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourAttach(&(PVOID&)Sur_Sub, Fake_Sub);
+    DetourAttach(&(PVOID&)pCreateFontIndirectA, fCreateFontIndirectA);
     DetourTransactionCommit();
  
     start_falg = TRUE;
@@ -200,6 +306,7 @@ void end()
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourDetach(&(PVOID&)Sur_Sub, Fake_Sub);
+    DetourDetach(&(PVOID&)pCreateFontIndirectA, fCreateFontIndirectA);
     DetourTransactionCommit();
  
 }
@@ -218,7 +325,7 @@ void LoadExerte()
     }
 
     m_Addr = (DWORD)::GetProcAddress(hmRent, "?printSub@RetouchPrintManager@@AAE_NPBDAAVUxPrintData@@K@Z");
-    Sur_Sub = (char(*)(const char*, UxData&, ULONG))m_Addr;
-
+    Sur_Sub = (char(__stdcall*)(const char*, UxData&, ULONG))m_Addr;
+    pTpan = (LPCSTR(*)(LPCSTR))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete");
     start();
 }

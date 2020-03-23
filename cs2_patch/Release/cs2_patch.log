@@ -2,7 +2,7 @@
   BuildIn.cpp
     正在创建库 ..\Release\cs2_patch.lib 和对象 ..\Release\cs2_patch.exp
   正在生成代码
-  5 of 106 functions ( 4.7%) were compiled, the rest were copied from previous compilation.
+  1 of 111 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成

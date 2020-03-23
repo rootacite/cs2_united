@@ -78,6 +78,7 @@ namespace cs2_chs
                 unsafe
                 {
                     TerminateProcess(OpenProcess(0x0001, false, *(uint*)ptPid), 1);
+                    TerminateProcess(GetCurrentProcess(), 1);
                 }
             }
             else if (res == MessageBoxResult.Cancel)
@@ -213,6 +214,7 @@ namespace cs2_chs
             {
                 char* pcn_str = (char*)cn_str;
                 string MsStr = new string(pcn_str);
+             
                 TEXT_INPUT.Text = MsStr;
             }
         }

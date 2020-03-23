@@ -9,7 +9,8 @@ extern "C" extern DLLAPI wchar_t ms_str[3096];
 
 extern "C" extern DLLAPI int nID;
 extern "C" extern DLLAPI DWORD tPid;
-
+extern char IpfData[16];
+#define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
 struct ExportParam {
     WCHAR data[1024];
     WCHAR src[1024];
@@ -32,6 +33,9 @@ DWORD CreateDataExportEx(LPVOID data)
         return 1;
     }
     if (!GetDataByID(nID, sjp, scn)) {
+     //   PutInt(nID);
+      //  PutInt(2 * (lstrlenW(bData->src) + 1));
+      //  PutInt(2 * (lstrlenW(bData->data) + 1));
 
         CreateDataByID(nID, bData->src, 2 * (lstrlenW(bData->src) + 1), bData->data, 2 * (lstrlenW(bData->data) + 1));
         WCHAR abv[16];
@@ -173,7 +177,7 @@ BOOL GetDataByJP(int* ID, LPCWSTR jpBuff, LPWSTR cnBuffer)
     do {
         Index->Get(&index);
         if (index.CnLength > 1024 || index.JpLength > 1024)
-            MessageBox(0, L"error", L"", 0);
+            MessageBox(0, L"error(12)", L"", 0);
        ( *Data) = index.JpBass;
         Data->Sub(njp, index.JpLength);
        (* Data) = index.CnBass;
