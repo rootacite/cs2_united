@@ -166,16 +166,33 @@ UINT InjectSelfTo(LPCSTR inptr)
 }
 DWORD lecx;
 
+wstring AJToW(string aj) {
+    wstring result = L"";
+    WCHAR  testTran[1024];
+
+    int size = MultiByteToWideChar(932, 0, aj.c_str(), -1, testTran, 0);
+    MultiByteToWideChar(932, 0, aj.c_str(), -1, testTran, size);
+
+    result = testTran;
+    return result;
+}
+
+string WToAG(wstring ws) {
+    char buffer[2048];
+    string result = "";
+
+    int size = WideCharToMultiByte(936, 0, ws.c_str(), -1, buffer, 0, NULL, FALSE);
+    WideCharToMultiByte(936, 0, ws.c_str(), -1, buffer, size, NULL, FALSE);
+
+    result = buffer;
+    return result;
+}
 
 extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
-    USES_CONVERSION;
+    wstring nbStr = AJToW(nStr);
    
-    WCHAR testTran[1024];
-    int size = MultiByteToWideChar(932, 0, nStr, -1, testTran, 0);
-    MultiByteToWideChar(932, 0, nStr, -1, testTran, size);
 
-   //  MessageBoxW(0, testTran, L"", 0);
-    lstrcpyW(ms_str, testTran);
+    lstrcpyW(ms_str, nbStr.c_str());
 
 
         char buffer[1024];
@@ -187,15 +204,12 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
         if (!GetDataByID(ppdid, sjp, scn)) {//尝试获取当前ID的数据
             //如果失败
             int pID = 0;
-            if (GetDataByJP(&pID, testTran, scn)) {//尝试从原文获取翻译
+            if (GetDataByJP(&pID, nbStr.c_str(), scn)) {//尝试从原文获取翻译
                 //成功
                 nID = pID;
                
                
-                int nsize = WideCharToMultiByte(936, 0, scn, -1, buffer, 0, NULL, FALSE);
-                WideCharToMultiByte(936, 0, scn, -1, buffer, nsize, NULL, FALSE);
-                MessageBoxA(0, buffer, "cna", 0);
-                return "我草泥马";//直接返回
+                return WToAG(scn).c_str();;//直接返回
             }
             else {
                 //失败
@@ -215,32 +229,25 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
         else
         {
             //如果成功
-            if (lstrcmpW(sjp, testTran) == 0) {//检查是否是正确的翻译
+            if (lstrcmpW(sjp, nbStr.c_str()) == 0) {//检查是否是正确的翻译
                 //如果是则直接应用
                 nID = ppdid;
 
               
-                int nsize = WideCharToMultiByte(936, 0, scn, -1, buffer, 0, NULL, FALSE);
-                WideCharToMultiByte(936, 0, scn, -1, buffer, nsize, NULL, FALSE);
-                MessageBoxA(0, buffer, "cna", 0);
+                
 
-                return "我草泥马";
+                return WToAG(scn).c_str();
             }
             else
             {
                 //如果不是则
                 int pID = 0;
-                if (GetDataByJP(&pID, testTran, scn)) {//再次尝试用原文获取数据
+                if (GetDataByJP(&pID, nbStr.c_str(), scn)) {//再次尝试用原文获取数据
                     //如果成功
                     nID = pID;
                  
-                 
-                    
-                    int nsize = WideCharToMultiByte(936, 0, scn, -1, buffer, 0, NULL, FALSE);
-                    WideCharToMultiByte(936, 0, scn, -1, buffer, nsize, NULL, FALSE);
-
-                    MessageBoxA(0, buffer, "cna", 0);
-                    return "我草泥马";//直接返回
+                
+                    return WToAG(scn).c_str();//直接返回
                 }
                 else {
                     //如果不是
@@ -257,6 +264,7 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
 }
 
 LPCSTR(*pTpan)(LPCSTR);
+char bcStr[2048];
 
 extern "C" char __stdcall Fake_Sub(const char* a, UxData& b,ULONG c)
 {
@@ -265,11 +273,11 @@ extern "C" char __stdcall Fake_Sub(const char* a, UxData& b,ULONG c)
     }
 
   //  LPCSTR nStrnp = ((string(*)(string))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete"))(a).c_str();
-    LPCSTR bc = pTpan(a);
+    lstrcpyA(bcStr, pTpan(a));
     __asm {
      pop ecx
     }
-    return Sur_Sub(bc, b, c);
+    return Sur_Sub(bcStr, b, c);
 }
 DWORD WINAPI Th(LPVOID lp) {
     char a[16];
