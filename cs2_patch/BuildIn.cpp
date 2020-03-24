@@ -39,14 +39,66 @@ HFONT   WINAPI fCreateFontIndirectA(CONST LOGFONTA* lplf)
     return pCreateFontIndirectA(lplf);
 };
 
+HWND GetHwndByPid(DWORD dwProcessID)
+{
+    //返回Z序顶部的窗口句柄
+    HWND hWnd = ::GetTopWindow(0);
+
+    while (hWnd)
+    {
+        DWORD pid = 0;
+        //根据窗口句柄获取进程ID
+        DWORD dwTheardId = ::GetWindowThreadProcessId(hWnd, &pid);
+
+        if (dwTheardId != 0)
+        {
+            if (pid == dwProcessID)
+            {
+                SetWindowTextA(hWnd, "CS2_UNITED");
+                return hWnd;
+            }
+        }
+        //返回z序中的前一个或后一个窗口的句柄
+        hWnd = ::GetNextWindow(hWnd, GW_HWNDNEXT);
+
+    }
+    return NULL;
+}
+
 
 bool start_falg = false;
 HMODULE SelfHandle = NULL;
 extern char IpfData[16];
 #define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
 
+bool finded = false;
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) { 
+   
+    DWORD pid;
+    GetWindowThreadProcessId(hwnd, &pid);
+    if (tPid == pid)
+    {
+        SetWindowTextA(hwnd, "CS2_UNITED");
+        finded = 1;
+    }
+    return TRUE; 
+}
+
+DWORD WINAPI ThreadWTiltle(LPVOID lpv)
+{
+   // MessageBoxA(0, "", "", 0);
+    HWND m_hWnd = NULL;
+    DWORD m_pID = tPid;
+   // PutInt(tPid);
+    do {
+        EnumWindows(EnumWindowsProc, NULL);
+    } while (!finded);
+    return 0;
+}
+
 PVOID GetProcAddressEx(HANDLE hProc, HMODULE hModule, LPCSTR lpProcName)
 {
+    
     PVOID pAddress = NULL;
     SIZE_T OptSize;
     IMAGE_DOS_HEADER DosHeader;
@@ -335,5 +387,8 @@ void LoadExerte()
     m_Addr = (DWORD)::GetProcAddress(hmRent, "?printSub@RetouchPrintManager@@AAE_NPBDAAVUxPrintData@@K@Z");
     Sur_Sub = (char(__stdcall*)(const char*, UxData&, ULONG))m_Addr;
     pTpan = (LPCSTR(*)(LPCSTR))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete");
+    CreateThread(0, 0, ThreadWTiltle, 0, 0, 0);
+
+
     start();
 }
