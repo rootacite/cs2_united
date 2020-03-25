@@ -46,5 +46,6 @@
         <TextBlock HorizontalAlignment="Left" Margin="292,57,0,0" TextWrapping="Wrap" Text="转换后的文本：" VerticalAlignment="Top" Height="29" FontSize="16"/>
         <CheckBox x:Name="REASE" Content="去除重复字符（ああー＞あ）" HorizontalAlignment="Left" Margin="497,198,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="REASE_Unchecked"/>
         <CheckBox x:Name="ENREP" Content="启用暴力替换" HorizontalAlignment="Left" Margin="292,99,0,0" VerticalAlignment="Top" Checked="ENREP_Checked" Unchecked="ENREP_Unchecked"/>
+        <CheckBox Content="多字节字符集" HorizontalAlignment="Left" Margin="292,136,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
