@@ -62,7 +62,7 @@ DWORD CreateDataExportEx(LPVOID data)
         saveProcess = 0.0;
         int result = MessageBoxW(NULL, nString.c_str(), L"information", MB_ICONINFORMATION | MB_OKCANCEL | MB_MODEMASK);
         if (result != IDOK) {
-            saveProcess = 1.0;
+            saveProcess = 1;
             return 1;
         }
         int p = 0;
@@ -92,19 +92,19 @@ DWORD CreateDataExportEx(LPVOID data)
                 createData.CnBass = _Data->Size();
                 _Data->Push(scn, 2 * (lstrlenW(scn) + 1));
                 _Index->Push(&createData);
-                _Index->Save();
-                _Data->Save();
+              
             }
             saveProcess = (double)p / (double)(lasger);
             p++;
         }
-
+        _Index->Save();
+        _Data->Save();
         delete _Index;
         delete _Data;
         delete Index;
         delete ::Data;
         //   saveProcess = 0.0;
-        saveProcess = 1;
+       
         DeleteFile(L"Data.ax");
         DeleteFile(L"Index.ax");
         rename("~Data.ax", "Data.ax");
@@ -113,9 +113,12 @@ DWORD CreateDataExportEx(LPVOID data)
         ::Data = new MicroBinary(L"Data.ax");
         Index->Load();
         ::Data->Load();
+
+        saveProcess = 1;
         return 1;
     }
-
+    saveProcess = 1;
+    return 0;
 }
 void CreateDataExport(WCHAR src[],WCHAR data[])
 {

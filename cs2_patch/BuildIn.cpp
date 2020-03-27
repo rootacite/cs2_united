@@ -239,7 +239,7 @@ string WToAG(wstring ws) {
     result = buffer;
     return result;
 }
-
+extern "C" extern DLLAPI wchar_t cn_str[1024];
 extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
     wstring nbStr = AJToW(nStr);
    
@@ -260,7 +260,7 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                 //成功
                 nID = pID;
                
-               
+                lstrcpyW(cn_str, scn);
                 return WToAG(scn).c_str();;//直接返回
             }
             else {
@@ -287,7 +287,7 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
 
               
                 
-
+                lstrcpyW(cn_str, scn);
                 return WToAG(scn).c_str();
             }
             else
@@ -298,7 +298,7 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                     //如果成功
                     nID = pID;
                  
-                
+                    lstrcpyW(cn_str, scn);
                     return WToAG(scn).c_str();//直接返回
                 }
                 else {

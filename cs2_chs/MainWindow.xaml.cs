@@ -201,8 +201,9 @@ namespace cs2_chs
                     {
                         apply.IsEnabled = true;
                         PBS.Visibility = Visibility.Collapsed;
+                        *saveProcess = 0;
                     });
-                    *saveProcess = 0;
+                   
                 }
             });
             thread2.Start();
