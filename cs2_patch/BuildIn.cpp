@@ -267,15 +267,15 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                 //失败
                 if (nID == -1) {
                     nID = 0;
-                    int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
+                //    int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
                    
-                    return nStr;
+                    return WToAG(AJToW( nStr)).c_str();
                 }
                 if (GetDataByID(nID, sjp, scn))
                     nID = GEtLargestID() + 1;
-                int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
+              //  int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
                
-                    return nStr;
+                    return WToAG(AJToW(nStr)).c_str();
             }
         }
         else
@@ -305,9 +305,9 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                     //如果不是
                     nID = GEtLargestID() + 1;
                     //   MessageBoxA(0, "4", "", 0);
-                    int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
+                 //   int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
                     
-                    return nStr;
+                    return WToAG(AJToW(nStr)).c_str();
                 }
 
             }
