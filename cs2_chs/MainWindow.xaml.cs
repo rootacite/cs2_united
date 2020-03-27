@@ -204,6 +204,7 @@ namespace cs2_chs
                         apply.IsEnabled = true;
                         PBS.Visibility = Visibility.Collapsed;
                         *saveProcess = 0;
+                        TEXT_INPUT.Text = "";
                     });
                    
                 }
@@ -256,7 +257,7 @@ namespace cs2_chs
         }
 
         private void TEXT_INPUT_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
+        {       
             string data = Clipboard.GetText();
             TEXT_INPUT.Text = data;
 
@@ -270,13 +271,15 @@ namespace cs2_chs
 
         private void TEXT_INPUT_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Space)
+     
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
             {
                 e.Handled = true;
-                ButtonAutomationPeer peer = new ButtonAutomationPeer(apply); 
-                IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                invokeProv.Invoke();
-
+                Button_Click(null, null);
             }
         }
     }

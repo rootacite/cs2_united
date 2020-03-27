@@ -15,6 +15,9 @@ struct ExportParam {
     WCHAR data[1024];
     WCHAR src[1024];
 };
+
+extern bool ListenFlag;
+
 DWORD CreateDataExportEx(LPVOID data)
 {
 
@@ -24,12 +27,14 @@ DWORD CreateDataExportEx(LPVOID data)
     int lasger = GEtLargestID();
     if (nID == -1) {
         MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
-        saveProcess = 1.0;
+        ListenFlag = false;
+        saveProcess = 1;
         return 1;
     }
     if (nID - lasger > 1) {
         MessageBox(0, L"the ID value seems not available,therefore this action has been refused", L"error", MB_ICONERROR | MB_MODEMASK);
-        saveProcess = 1.0;
+        ListenFlag = false;
+        saveProcess = 1;
         return 1;
     }
     if (!GetDataByID(nID, sjp, scn)) {
@@ -48,7 +53,8 @@ DWORD CreateDataExportEx(LPVOID data)
         str += L"->";
         str += bData->data;
         //  MessageBoxW(NULL, str.c_str(), L"successed to add rule", MB_ICONINFORMATION | MB_MODEMASK);
-        saveProcess = 1.0;
+        ListenFlag = false;
+        saveProcess = 1;
         return 1;
     }
     else {
@@ -62,6 +68,7 @@ DWORD CreateDataExportEx(LPVOID data)
         saveProcess = 0.0;
         int result = MessageBoxW(NULL, nString.c_str(), L"information", MB_ICONINFORMATION | MB_OKCANCEL | MB_MODEMASK);
         if (result != IDOK) {
+            ListenFlag = false;
             saveProcess = 1;
             return 1;
         }
@@ -114,11 +121,13 @@ DWORD CreateDataExportEx(LPVOID data)
         Index->Load();
         ::Data->Load();
 
+        ListenFlag = false;
         saveProcess = 1;
         return 1;
     }
+    ListenFlag = false;
     saveProcess = 1;
-    return 0;
+    return 1;
 }
 void CreateDataExport(WCHAR src[],WCHAR data[])
 {

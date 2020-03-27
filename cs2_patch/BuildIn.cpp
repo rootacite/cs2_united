@@ -18,6 +18,8 @@ extern "C" extern DLLAPI DWORD tPid;
 extern MicroData* Index;
 extern MicroBinary* Data;
 
+bool ListenFlag = true;
+
 DWORD m_Addr;
 extern "C" extern DLLAPI bool IsSuccess;
 
@@ -71,6 +73,8 @@ HMODULE SelfHandle = NULL;
 extern char IpfData[16];
 #define PutInt(a) _itoa_s(a,IpfData,10);MessageBoxA(0,IpfData,"num",0);
 
+HWND hWnd = NULL;
+
 bool finded = false;
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) { 
    
@@ -78,6 +82,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
     GetWindowThreadProcessId(hwnd, &pid);
     if (tPid == pid)
     {
+        hWnd = hwnd;
         SetWindowTextA(hwnd, "CS2_UNITED");
         finded = 1;
     }
@@ -87,7 +92,6 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 DWORD WINAPI ThreadWTiltle(LPVOID lpv)
 {
    // MessageBoxA(0, "", "", 0);
-    HWND m_hWnd = NULL;
     DWORD m_pID = tPid;
    // PutInt(tPid);
     do {
@@ -268,13 +272,23 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                 if (nID == -1) {
                     nID = 0;
                 //    int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
-                   
+
+                  
+                    ListenFlag = true;
+                    while (ListenFlag)
+                        Sleep(1);
+                    
+    
+
                     return WToAG(AJToW( nStr)).c_str();
                 }
                 if (GetDataByID(nID, sjp, scn))
                     nID = GEtLargestID() + 1;
               //  int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
-               
+                ListenFlag = true;
+                while (ListenFlag)
+                    Sleep(1);
+
                     return WToAG(AJToW(nStr)).c_str();
             }
         }
@@ -306,7 +320,11 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                     nID = GEtLargestID() + 1;
                     //   MessageBoxA(0, "4", "", 0);
                  //   int res = MessageBoxA(0, "检测到尚未添加到翻译规则的文本。\n如果要添加，建议现在添加。\n（你添加了吗？Y/N）", "注意！", MB_ICONWARNING | MB_YESNO);
-                    
+
+                    ListenFlag = true;
+                    while (ListenFlag)
+                        Sleep(1);
+
                     return WToAG(AJToW(nStr)).c_str();
                 }
 
