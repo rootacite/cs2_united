@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Messaging;
 using System.Windows.Interop;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace cs2_chs
 {
@@ -264,6 +266,18 @@ namespace cs2_chs
         private void TEXT_INPUT_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void TEXT_INPUT_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+                ButtonAutomationPeer peer = new ButtonAutomationPeer(apply); 
+                IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                invokeProv.Invoke();
+
+            }
         }
     }
 }

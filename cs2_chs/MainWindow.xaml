@@ -14,7 +14,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="01.jpg"/>
         </Grid.Background>
-        <TextBox x:Name="TEXT_INPUT" HorizontalAlignment="Left" Height="100" Margin="10,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="574" AcceptsReturn="True" FontSize="18" BorderBrush="Red" MouseRightButtonUp="TEXT_INPUT_MouseRightButtonUp" MouseRightButtonDown="TEXT_INPUT_MouseRightButtonDown" Grid.ColumnSpan="2">
+        <TextBox x:Name="TEXT_INPUT" HorizontalAlignment="Left" Height="100" Margin="10,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="574" AcceptsReturn="True" FontSize="18" BorderBrush="Red" MouseRightButtonUp="TEXT_INPUT_MouseRightButtonUp" MouseRightButtonDown="TEXT_INPUT_MouseRightButtonDown" Grid.ColumnSpan="2" KeyUp="TEXT_INPUT_KeyUp">
             <TextBox.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black" Offset="0"/>
