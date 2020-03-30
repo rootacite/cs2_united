@@ -21,6 +21,7 @@ extern MicroBinary* Data;
 bool ListenFlag = true;
 
 DWORD m_Addr;
+DWORD mh_Addr;
 extern "C" extern DLLAPI bool IsSuccess;
 
 char (__stdcall*Sur_Sub)(const char* , UxData& , ULONG ) = (char(__stdcall*)(const char*, UxData&, ULONG))0;//real function point
@@ -403,6 +404,10 @@ void LoadExerte()
     }
 
     m_Addr = (DWORD)::GetProcAddress(hmRent, "?printSub@RetouchPrintManager@@AAE_NPBDAAVUxPrintData@@K@Z");
+    mh_Addr=(DWORD)::GetProcAddress(hmRent, "?printHistory@RetouchPrintManager@@QAEXHQAVBacklogBlockDraw@@AAVscobjPrintArea@@1KHPAV?$map@HHU?$less@H@std@@V?$allocator@U?$pair@$$CBHH@std@@@2@@std@@@Z_SEH");//?printHistory@RetouchPrintManager@@QAEXHQAVBacklogBlockDraw@@AAVscobjPrintArea@@1KHPAV?$map@HHU?$less@H@std@@V?$allocator@U?$pair@$$CBHH@std@@@2@@std@@@Z_SEH
+    if (mh_Addr == 0) {
+        MessageBoxA(0,"","",0);
+   }
     Sur_Sub = (char(__stdcall*)(const char*, UxData&, ULONG))m_Addr;
     pTpan = (LPCSTR(*)(LPCSTR))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete");
     CreateThread(0, 0, ThreadWTiltle, 0, 0, 0);

@@ -282,5 +282,55 @@ namespace cs2_chs
                 Button_Click(null, null);
             }
         }
+
+        private void apply_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            TEXT_INPUT.Text = SRC_OUTPUT.Text;
+
+            Thread thread1 = new Thread(delegate ()
+            {
+                string LocalS = "";
+                string LocalP = "";
+                this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    LocalS = TEXT_INPUT.Text;
+                    LocalP = SRC_OUTPUT.Text;
+                });
+
+                CreateData(LocalP, LocalS);
+            });
+
+            Thread thread2 = new Thread(delegate ()
+            {
+                unsafe
+                {
+                    double* saveProcess = (double*)pSaveProcess;
+                    this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    {
+                        apply.IsEnabled = false;
+                        PBS.Visibility = Visibility.Visible;
+                    });
+                    *saveProcess = 0;
+                    while (*saveProcess != 1)
+                    {
+                        this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                        {
+                            PBS.Value = ((*saveProcess) * 100.0);
+                        });
+                        Thread.Sleep(15);
+                    }
+                    this.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    {
+                        apply.IsEnabled = true;
+                        PBS.Visibility = Visibility.Collapsed;
+                        *saveProcess = 0;
+                        TEXT_INPUT.Text = "";
+                    });
+
+                }
+            });
+            thread2.Start();
+            thread1.Start();
+        }
     }
 }

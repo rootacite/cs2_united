@@ -24,7 +24,7 @@
             </TextBox.Background>
         </TextBox>
         <Button x:Name="apply"  Content="Commit(&amp;B)" HorizontalAlignment="Left" Height="25" Margin="349.2,220,0,0" VerticalAlignment="Top" Width="90
-                " Click="Button_Click" Grid.Column="1">
+                " Click="Button_Click" Grid.Column="1" MouseRightButtonUp="apply_MouseRightButtonUp">
             <Button.Background>
                 <ImageBrush ImageSource="04.jpg"/>
             </Button.Background>
