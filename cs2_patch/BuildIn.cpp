@@ -28,11 +28,15 @@ char (__stdcall*Sur_Sub)(const char* , UxData& , ULONG ) = (char(__stdcall*)(con
 extern "C" char __stdcall Fake_Sub(const char*, UxData&, ULONG);//hooked function point
 
 HFONT(WINAPI*pCreateFontIndirectA)(CONST LOGFONTA* lplf)= CreateFontIndirectA;
+HFONT(WINAPI* pCreateFontIndirectW)(CONST LOGFONTW* lplf) = CreateFontIndirectW;
+
 HFONT   WINAPI fCreateFontIndirectA(CONST LOGFONTA* lplf) 
 {
     if (lplf->lfCharSet == GB2312_CHARSET)
         return pCreateFontIndirectA(lplf);
 
+
+   // MessageBoxA(0,"indecirt","",0);
     LOGFONTA* pNClplf = (LOGFONTA*)lplf;
     DWORD oldProtect;
     VirtualProtect(pNClplf, sizeof(LOGFONTA), PAGE_READWRITE, &oldProtect);
@@ -41,6 +45,30 @@ HFONT   WINAPI fCreateFontIndirectA(CONST LOGFONTA* lplf)
 
     return pCreateFontIndirectA(lplf);
 };
+
+HFONT   WINAPI fCreateFontIndirectW(CONST LOGFONTW* lplf)
+{
+    if (lplf == 0) {
+        return pCreateFontIndirectW(lplf);
+    }
+
+    if (lplf->lfCharSet == GB2312_CHARSET)
+        return pCreateFontIndirectW(lplf);
+
+
+    // MessageBoxA(0,"indecirt","",0);
+    LOGFONTW* pNClplf = (LOGFONTW*)lplf;
+
+    DWORD oldProtect;
+    VirtualProtect(pNClplf, sizeof(LOGFONTA), PAGE_READWRITE, &oldProtect);
+    pNClplf->lfCharSet = GB2312_CHARSET;
+    VirtualProtect(pNClplf, sizeof(LOGFONTA), oldProtect, NULL);
+
+ //   MessageBoxA(0,"","",0);
+
+    return pCreateFontIndirectW(lplf);
+};
+
 
 HWND GetHwndByPid(DWORD dwProcessID)
 {
@@ -198,7 +226,7 @@ UINT InjectSelfTo(LPCSTR inptr)
         wchar_t m_Path[MAX_PATH];
         GetModuleFileName(hMod, m_Path, MAX_PATH);
         if (!InjectDLL(info->hProcess, m_Path)) {
-            MessageBoxA(0, "", "", 0);
+            MessageBoxA(0, "error1", "", 0);
             return 0;
         }
         currentThread = info->hThread;
@@ -264,8 +292,9 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
             if (GetDataByJP(&pID, nbStr.c_str(), scn)) {//尝试从原文获取翻译
                 //成功
                 nID = pID;
-               
+              //  MessageBoxA(0, WToAG(scn).c_str(), "", 0);
                 lstrcpyW(cn_str, scn);
+               // return "大家吼呀，我是你爸爸把。";
                 return WToAG(scn).c_str();;//直接返回
             }
             else {
@@ -301,8 +330,9 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                 nID = ppdid;
 
               
-                
+             //  / MessageBoxA(0, WToAG(scn).c_str(),"",0);
                 lstrcpyW(cn_str, scn);
+               // return "大家吼呀，我是你爸爸把。";
                 return WToAG(scn).c_str();
             }
             else
@@ -314,6 +344,8 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                     nID = pID;
                  
                     lstrcpyW(cn_str, scn);
+                   // MessageBoxA(0, WToAG(scn).c_str(), "", 0);
+                   // return "大家吼呀，我是你爸爸把。";
                     return WToAG(scn).c_str();//直接返回
                 }
                 else {
@@ -371,6 +403,7 @@ void start()
     DetourUpdateThread(GetCurrentThread());
     DetourAttach(&(PVOID&)Sur_Sub, Fake_Sub);
     DetourAttach(&(PVOID&)pCreateFontIndirectA, fCreateFontIndirectA);
+   // DetourAttach(&(PVOID&)pCreateFontIndirectW, fCreateFontIndirectW);
     DetourTransactionCommit();
  
     start_falg = TRUE;
@@ -386,6 +419,7 @@ void end()
     DetourUpdateThread(GetCurrentThread());
     DetourDetach(&(PVOID&)Sur_Sub, Fake_Sub);
     DetourDetach(&(PVOID&)pCreateFontIndirectA, fCreateFontIndirectA);
+  //  DetourDetach(&(PVOID&)pCreateFontIndirectW, fCreateFontIndirectW);
     DetourTransactionCommit();
  
 }
@@ -406,7 +440,7 @@ void LoadExerte()
     m_Addr = (DWORD)::GetProcAddress(hmRent, "?printSub@RetouchPrintManager@@AAE_NPBDAAVUxPrintData@@K@Z");
     mh_Addr=(DWORD)::GetProcAddress(hmRent, "?printHistory@RetouchPrintManager@@QAEXHQAVBacklogBlockDraw@@AAVscobjPrintArea@@1KHPAV?$map@HHU?$less@H@std@@V?$allocator@U?$pair@$$CBHH@std@@@2@@std@@@Z_SEH");//?printHistory@RetouchPrintManager@@QAEXHQAVBacklogBlockDraw@@AAVscobjPrintArea@@1KHPAV?$map@HHU?$less@H@std@@V?$allocator@U?$pair@$$CBHH@std@@@2@@std@@@Z_SEH
     if (mh_Addr == 0) {
-        MessageBoxA(0,"","",0);
+        //MessageBoxA(0,"","",0);
    }
     Sur_Sub = (char(__stdcall*)(const char*, UxData&, ULONG))m_Addr;
     pTpan = (LPCSTR(*)(LPCSTR))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete");
