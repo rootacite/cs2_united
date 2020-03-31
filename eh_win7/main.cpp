@@ -5,7 +5,7 @@
 
 #pragma comment (lib,"cs2_patch.lib")
 
-int  WINAPI wWinMain(HINSTANCE hinst, HINSTANCE prevHin, LPWSTR lpw, int nCmdShow)
+int  WINAPI WinMain(HINSTANCE hinst, HINSTANCE prevHin, LPSTR lpw, int nCmdShow)
 {
 	InjectSelfTo("ExHIBIT.exe");
 }

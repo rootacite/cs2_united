@@ -267,11 +267,15 @@ string WToAG(wstring ws) {
     string result = "";
 
     int size = WideCharToMultiByte(936, 0, ws.c_str(), -1, buffer, 0, NULL, FALSE);
-    WideCharToMultiByte(936, 0, ws.c_str(), -1, buffer, size, NULL, FALSE);
+    WideCharToMultiByte(936, 0, ws.c_str(), ws.length()+1, buffer, size, NULL, FALSE);
 
     result = buffer;
     return result;
 }
+
+char bcStr[2048];
+
+
 extern "C" extern DLLAPI wchar_t cn_str[1024];
 extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
     wstring nbStr = AJToW(nStr);
@@ -295,7 +299,9 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
               //  MessageBoxA(0, WToAG(scn).c_str(), "", 0);
                 lstrcpyW(cn_str, scn);
                // return "大家吼呀，我是你爸爸把。";
-                return WToAG(scn).c_str();;//直接返回
+
+                strcpy_s(bcStr, WToAG(scn).c_str());
+                return 0;//直接返回
             }
             else {
                 //失败
@@ -330,10 +336,11 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                 nID = ppdid;
 
               
-             //  / MessageBoxA(0, WToAG(scn).c_str(),"",0);
+            //    MessageBoxA(0, WToAG(scn).c_str(),"",0);
                 lstrcpyW(cn_str, scn);
-               // return "大家吼呀，我是你爸爸把。";
-                return WToAG(scn).c_str();
+             //   return "大家吼呀，我是你爸爸把。";
+                strcpy_s(bcStr, WToAG(scn).c_str());
+                return 0;//直接返回
             }
             else
             {
@@ -344,9 +351,10 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
                     nID = pID;
                  
                     lstrcpyW(cn_str, scn);
-                   // MessageBoxA(0, WToAG(scn).c_str(), "", 0);
-                   // return "大家吼呀，我是你爸爸把。";
-                    return WToAG(scn).c_str();//直接返回
+                 //   MessageBoxA(0, WToAG(scn).c_str(), "", 0);
+              //      return "大家吼呀，我是你爸爸把。";
+                    strcpy_s(bcStr, WToAG(scn).c_str());
+                    return 0;//直接返回
                 }
                 else {
                     //如果不是
@@ -367,7 +375,6 @@ extern "C" DLLAPI LPCSTR  TranSplete(LPCSTR nStr) {
 }
 
 LPCSTR(*pTpan)(LPCSTR);
-char bcStr[2048];
 
 extern "C" char __stdcall Fake_Sub(const char* a, UxData& b,ULONG c)
 {
@@ -376,7 +383,7 @@ extern "C" char __stdcall Fake_Sub(const char* a, UxData& b,ULONG c)
     }
 
   //  LPCSTR nStrnp = ((string(*)(string))::GetProcAddress(GetModuleHandleA("cs2_patch.dll"), "TranSplete"))(a).c_str();
-    lstrcpyA(bcStr, pTpan(a));
+    pTpan(a);
     __asm {
      pop ecx
     }
